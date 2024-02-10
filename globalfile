@@ -1,0 +1,3 @@
+cc = g++
+obj = $(dir)/queue/*.cpp $(dir)/log/*.cpp
+option = -lpthread 
