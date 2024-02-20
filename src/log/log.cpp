@@ -12,7 +12,7 @@ Log::Log(){}
 Log::~Log(){
     queue->close();
     consumer->join();
-    fclose(fp);
+    if(toFile) fclose(fp);
 }
 
 void Log::init_(Level level_, const string &path_, const string &suffix_, 
@@ -20,24 +20,30 @@ void Log::init_(Level level_, const string &path_, const string &suffix_,
 
     std::lock_guard<std::mutex> locker(mtx);
     assert(initialized == false);
-    assert(path_.length() > 0);
+    if(toFile) assert(path_.length() > 0);
     assert(capacity_ > 0);
 
     initialized = true;
     level = level_;
     toFile = toFile_;
     toConsole = toConsole_;
-    path = path_;
-    suffix = suffix_;
+    
 
-    time_t now = time(nullptr);
-    localtime_r(&now, &day);
+    if(toFile) {
 
-    if(path.length() > 1 && path.back() == '/'){
-        path.pop_back();
+        path = path_;
+        suffix = suffix_;
+
+        if(path.length() > 1 && path.back() == '/'){
+            path.pop_back();
+        }
+
+        time_t now = time(nullptr);
+        localtime_r(&now, &day);
+
+        makeFile();
+        
     }
-
-    if(toFile) makeFile();
 
     std::unique_ptr<BlockQueue<string>> queue_temp(new BlockQueue<string>(capacity_));
     queue = std::move(queue_temp);
@@ -101,12 +107,12 @@ void Log::msgStart(ostringstream &stream, Level level_){
     struct tm now;
     time_t t = time(nullptr);
     localtime_r(&t, &now);
-    stream << '[' << day.tm_year + 1900  << '-'
-    << std::setw(2) << std::setfill('0') << day.tm_mon + 1 << '-'
-    << std::setw(2) << std::setfill('0') << day.tm_mday << ' '
-    << std::setw(2) << std::setfill('0') << day.tm_hour << ':'
-    << std::setw(2) << std::setfill('0') << day.tm_min << ':'
-    << std::setw(2) << std::setfill('0') << day.tm_sec << ']'
+    stream << '[' << now.tm_year + 1900  << '-'
+    << std::setw(2) << std::setfill('0') << now.tm_mon + 1 << '-'
+    << std::setw(2) << std::setfill('0') << now.tm_mday << ' '
+    << std::setw(2) << std::setfill('0') << now.tm_hour << ':'
+    << std::setw(2) << std::setfill('0') << now.tm_min << ':'
+    << std::setw(2) << std::setfill('0') << now.tm_sec << ']'
     << '[' << getLevelMsg(level_) << "]"
     << '[' << std::this_thread::get_id() << ']' << ' ';
 }

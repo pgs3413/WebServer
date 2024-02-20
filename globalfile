@@ -1,3 +1,3 @@
 cc = g++
-obj = $(dir)/log/*.cpp
+obj = $(dir)/log/*.cpp $(dir)/pool/*.cpp
 option = -lpthread 
