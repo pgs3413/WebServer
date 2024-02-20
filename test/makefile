@@ -9,7 +9,7 @@ all:
 	@echo "test nothing to do"
 
 $(target): cmd
-	$(cc) $(obj) $@.cpp -o $(bin)/$@ ${option}
+	$(cc) $(obj) test_$@.cpp -o $(bin)/$@ ${option}
 	cd $(bin) && ./$@
 
 cmd:

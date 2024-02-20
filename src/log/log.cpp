@@ -37,9 +37,9 @@ void Log::init_(Level level_, const string &path_, const string &suffix_,
         path.pop_back();
     }
 
-    makeFile();
+    if(toFile) makeFile();
 
-    std::unique_ptr<StrBlockQueue> queue_temp(new StrBlockQueue(capacity_));
+    std::unique_ptr<BlockQueue<string>> queue_temp(new BlockQueue<string>(capacity_));
     queue = std::move(queue_temp);
 
     std::unique_ptr<std::thread> thread_temp(new std::thread(asynConsume));
@@ -62,7 +62,7 @@ void Log::makeFile(){
     if(dir == nullptr && errno == ENOENT){
         if(mkdir(path.c_str(), 0777)){
             std::cerr << "can`t mkdir path: " << path << std::endl;
-            exit(1);
+            throw new std::exception;
         }        
     }
     closedir(dir);
@@ -70,7 +70,7 @@ void Log::makeFile(){
     fp = fopen(filename.c_str(), "a");
     if(fp == nullptr){
         std::cerr << "can`t access log file: " << filename << std::endl;
-        exit(1);
+        throw new std::exception;
     }
 
     string startLine;

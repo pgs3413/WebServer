@@ -1,13 +1,14 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-#include "../queue/strblockqueue.h"
+#include "../queue/blockqueue.h"
 #include<string>
 #include<thread>
 #include<mutex>
 #include<time.h>
 #include<assert.h>
 #include<sstream>
+#include<exception>
 
 namespace log {
 
@@ -31,7 +32,7 @@ private:
     string suffix;
     FILE* fp = nullptr;
 
-    std::unique_ptr<StrBlockQueue> queue = nullptr;
+    std::unique_ptr<BlockQueue<string>> queue = nullptr;
     std::unique_ptr<std::thread> consumer = nullptr;
 
     std::mutex mtx;

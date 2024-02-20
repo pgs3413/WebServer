@@ -1,15 +1,17 @@
-#include "../src/queue/strblockqueue.h"
+#include "../src/queue/blockqueue.h"
 #include<thread>
 #include<iostream>
 #include<fstream>
 #include<signal.h>
+#include<string>
 
 using std::cout;
 using std::cin;
+using std::string;
 
 class test_queue{
 private:
-    StrBlockQueue queue;
+    BlockQueue<std::string> queue;
     std::unique_ptr<std::thread> consumer ;
     std::ofstream fout;
     int sleepSecond;
