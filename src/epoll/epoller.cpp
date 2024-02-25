@@ -1,14 +1,14 @@
 #include "epoller.h"
-#include<exception>
+#include<stdexcept>
 #include<unistd.h>
 
 Epoller::Epoller(int evListNum_){
 
     evListNum = evListNum_;
     eventNum = 0;
-    epollFd = epoll_create(0);
+    epollFd = epoll_create1(0);
     if(epollFd == -1) 
-        throw new std::exception;
+        throw new std::runtime_error("create epoller");
     evlist = new struct epoll_event[evListNum];
 
 }
