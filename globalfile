@@ -1,4 +1,4 @@
 cc = g++
 obj = $(dir)/log/*.cpp $(dir)/pool/*.cpp \
-$(dir)/epoll/*.cpp
+$(dir)/epoll/*.cpp $(dir)/socket/*.cpp
 option = -lpthread 

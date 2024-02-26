@@ -68,7 +68,7 @@ void Log::makeFile(){
     if(dir == nullptr && errno == ENOENT){
         if(mkdir(path.c_str(), 0777)){
             std::cerr << "can`t mkdir path: " << path << std::endl;
-            throw new std::exception;
+            throw std::runtime_error("could not mkdir path");
         }        
     }
     closedir(dir);
@@ -76,7 +76,7 @@ void Log::makeFile(){
     fp = fopen(filename.c_str(), "a");
     if(fp == nullptr){
         std::cerr << "can`t access log file: " << filename << std::endl;
-        throw new std::exception;
+        throw std::runtime_error("could not access file");
     }
 
     string startLine;

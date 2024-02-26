@@ -8,7 +8,7 @@ Epoller::Epoller(int evListNum_){
     eventNum = 0;
     epollFd = epoll_create1(0);
     if(epollFd == -1) 
-        throw new std::runtime_error("create epoller");
+        throw std::runtime_error("create epoller");
     evlist = new struct epoll_event[evListNum];
 
 }

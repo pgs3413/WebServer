@@ -8,7 +8,7 @@
 #include<time.h>
 #include<assert.h>
 #include<sstream>
-#include<exception>
+#include<stdexcept>
 
 namespace log {
 
