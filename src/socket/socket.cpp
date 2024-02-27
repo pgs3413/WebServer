@@ -5,6 +5,8 @@ Socket::Socket(int fd_) : fd(fd_) {
 
 Socket::Socket(Socket &&socket){
     fd = socket.fd;
+    port = socket.port;
+    host = socket.host;
     socket.fd = -1;
 }
 
@@ -43,7 +45,7 @@ Socket::~Socket(){
 }
 
 void Socket::closeSocket(){
-    if(fd < 0){
+    if(fd >= 0){
         close(fd);
         fd = -1;
     }
@@ -52,6 +54,8 @@ void Socket::closeSocket(){
 Socket & Socket::operator=(Socket &&socket){
     closeSocket();
     fd = socket.fd;
+    port = socket.port;
+    host = socket.host;
     socket.fd = -1;
     return *this;
 }

@@ -54,7 +54,7 @@ Socket ServerSocket::acceptSocket(){
 }
 
 void ServerSocket::closeSocket(){
-    if(listenFd < 0) {
+    if(listenFd >= 0) {
         close(listenFd);
         listenFd = -1;
     }
