@@ -9,7 +9,13 @@ int main(){
 
         ServerSocket server(8080);
         std::cout << "server wait to connet..." << std::endl;
+        // server.setNonBlock();
         Socket socket = server.acceptSocket();
+        if(socket == -1){
+            std::cout << "server won`t block..., change to block" << std::endl;
+            server.setNonBlock(false);
+            socket = server.acceptSocket();
+        }
 
         char buf[1024];
         std::cout << "server wait to read..." << std::endl;
@@ -17,6 +23,9 @@ int main(){
         std::string s(buf, bytes);
 
         std::cout << "server read msg: " << s << std::endl;
+
+        // 测试四次挥手
+        std::cin >> s;
 
         socket.closeSocket();
         server.closeSocket();

@@ -1,9 +1,10 @@
 #include "socket.h"
 
 
-ServerSocket::ServerSocket(unsigned short port_, int backlog) : port(port_) {
+ServerSocket::ServerSocket(unsigned short port_, int backlog) : _Socket(-1) {
 
-    listenFd = -1;
+    port = htons(port_);
+    host.s_addr = htonl(INADDR_ANY);
 
     int ret;
     ret = socket(AF_INET, SOCK_STREAM, 0);
@@ -11,51 +12,46 @@ ServerSocket::ServerSocket(unsigned short port_, int backlog) : port(port_) {
         throw std::runtime_error("could not create server socket");
     }
 
-    listenFd = ret;
+    fd = ret;
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(port);
+    addr.sin_addr = host;
+    addr.sin_port = port;
 
-    ret = bind(listenFd, (struct sockaddr *)&addr, sizeof(addr));
+    ret = bind(fd, (struct sockaddr *)&addr, sizeof(addr));
     if(ret == -1){
-        close(listenFd);
-        listenFd = -1;
+        close(fd);
+        fd = -1;
         throw std::runtime_error("could not bind to port");
     }
 
-    ret = listen(listenFd, backlog);
+    ret = listen(fd, backlog);
     if(ret == -1){
-        close(listenFd);
-        listenFd = -1;
+        close(fd);
+        fd = -1;
         throw std::runtime_error("could not listen");
     }
 
 }
 
 ServerSocket::~ServerSocket(){
-    closeSocket();
 }
 
 
 Socket ServerSocket::acceptSocket(){
-    if(listenFd < 0) {
+    if(fd < 0) {
         throw std::logic_error("server socket not yet created");
     }
     struct sockaddr_in addr;
     socklen_t addrlen;
-    int fd = accept(listenFd, (struct sockaddr *)&addr, &addrlen);
-    if(fd == -1){
-        throw std::runtime_error("could not accept socket");
-    }
-    Socket socket(fd);
-    return socket;
-}
+    int socketFd = accept(fd, (struct sockaddr *)&addr, &addrlen);
 
-void ServerSocket::closeSocket(){
-    if(listenFd >= 0) {
-        close(listenFd);
-        listenFd = -1;
+    Socket socket(socketFd);
+    if(socketFd >= 0){
+        socket.port = addr.sin_port;
+        socket.host = addr.sin_addr;
     }
+
+    return socket;
 }

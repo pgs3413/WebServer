@@ -1,18 +1,17 @@
 #include "socket.h"
 
-Socket::Socket(int fd_) : fd(fd_) {
+Socket::Socket(int fd) : _Socket(fd) {
 }
 
-Socket::Socket(Socket &&socket){
+Socket::Socket(Socket &&socket) : _Socket(-1) {
     fd = socket.fd;
     port = socket.port;
     host = socket.host;
     socket.fd = -1;
 }
 
-Socket::Socket(const std::string &host_, unsigned short port_){
-    
-    fd = -1;
+Socket::Socket(const std::string &host_, unsigned short port_) : _Socket(-1) {
+     
     int ret;
 
     port = htons(port_);
@@ -41,14 +40,6 @@ Socket::Socket(const std::string &host_, unsigned short port_){
 }
 
 Socket::~Socket(){
-    closeSocket();
-}
-
-void Socket::closeSocket(){
-    if(fd >= 0){
-        close(fd);
-        fd = -1;
-    }
 }
 
 Socket & Socket::operator=(Socket &&socket){
@@ -60,24 +51,20 @@ Socket & Socket::operator=(Socket &&socket){
     return *this;
 }
 
+Socket::operator int(){
+    return fd;
+}
+
 int Socket::readSocket(void *buf, size_t size){
     if(fd < 0){
         throw std::logic_error("socket not yet created");
     }
-    int ret = read(fd, buf, size);
-    if(ret < 0){
-        throw std::runtime_error("socket could not read");
-    }
-    return ret;
+    return read(fd, buf, size);
 }
 
 int Socket::writeSocket(const void *buf, size_t size){
     if(fd < 0){
         throw std::logic_error("socket not yet created");
     }
-    int ret = write(fd, buf, size);
-    if(ret < 0){
-        throw std::runtime_error("socket could not write");
-    }
-    return ret;
+    return write(fd, buf, size);
 }
