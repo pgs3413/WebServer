@@ -50,7 +50,7 @@ class ServerSocket : public _Socket {
 
 
 public:
-    ServerSocket(unsigned short port_, bool reuseAddress = true, int backlog = 1000);
+    ServerSocket(unsigned short port_, bool reuseAddress = true, int rcvBufSize = -1, int backlog = 1000);
     ~ServerSocket();
     Socket acceptSocket();
 

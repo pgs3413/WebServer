@@ -18,7 +18,7 @@ int main(){
         //     throw std::runtime_error("could not set sndbuf");
         // }
 
-        socklen_t len;
+        socklen_t len = sizeof(int);
         ret = getsockopt(client, SOL_SOCKET, SO_SNDBUF, &writeBufSize, &len);
         if(ret == -1){
             throw std::runtime_error("could not get sndbuf");
@@ -46,6 +46,8 @@ int main(){
     }catch(std::exception & e){
         std::cout << e.what() << std::endl;
     }
+
+    std::perror(nullptr);
 
     return 0;
 }
