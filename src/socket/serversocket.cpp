@@ -1,7 +1,7 @@
 #include "socket.h"
 
 
-ServerSocket::ServerSocket(unsigned short port_, int backlog) : _Socket(-1) {
+ServerSocket::ServerSocket(unsigned short port_, bool reuseAddress, int backlog) : _Socket(-1) {
 
     port = htons(port_);
     host.s_addr = htonl(INADDR_ANY);
@@ -13,6 +13,14 @@ ServerSocket::ServerSocket(unsigned short port_, int backlog) : _Socket(-1) {
     }
 
     fd = ret;
+
+    if(reuseAddress){
+        int optval = 1;
+        ret = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
+        if(ret == -1){
+        throw std::runtime_error("could not set reuseAddress");
+        }
+    }
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
