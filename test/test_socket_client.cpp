@@ -26,6 +26,9 @@ int main(){
 
         std::cout << "client connet to 8080 successful " << "(sndbuf = " << writeBufSize << ")" << std::endl;
 
+        //设置关闭级别 1: 立即关闭 2:优雅关闭，等待一段时间写入 其他：等待写入完成
+        client.setLinger(2);
+
         std::string s;
         std::string ss;
         std::cin >> ss;

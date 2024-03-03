@@ -33,3 +33,21 @@ bool _Socket::setNonBlock(bool isNonBlock){
     if(fcntl(fd, F_SETFL, flags) == -1) return false;
     return true;
 }
+
+bool _Socket::setLinger(int level){
+
+    struct linger optval = {0};
+
+    if(level == 1){
+        optval.l_onoff = 1;
+        optval.l_linger = 0;
+    }else if(level == 2){
+        optval.l_onoff = 1;
+        optval.l_linger = 1;
+    }
+
+    int ret = setsockopt(fd, SOL_SOCKET, SO_LINGER, (const void *)&optval, sizeof(optval));
+    if(ret == -1) return false;
+    return true;
+
+}

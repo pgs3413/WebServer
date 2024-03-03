@@ -24,6 +24,7 @@ public:
 
     void closeSocket();
     bool setNonBlock(bool isNonBlock = true);
+    bool setLinger(int level = 0);
 
 };
 
