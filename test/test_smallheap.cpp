@@ -36,9 +36,9 @@ int main(){
     heap.add({104,104});
     heap.add({105,105});
     heap.add({106,106});
-    heap.add({9,9});
+    heap.add({9,100});
 
-    heap.adjust(8, 800);
+    heap.adjust(8, 105);
 
     heap.del(101);
 
