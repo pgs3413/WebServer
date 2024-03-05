@@ -29,7 +29,7 @@ public:
     ~SmallHeap(){}
 
     void adjust(int id, int priority);
-    void add(const T &t);
+    void add(T t);
     void del(int id);
     T front();
     void pop();
@@ -108,7 +108,7 @@ template<typename T>
  }
 
 template<typename T>
-void SmallHeap<T>::add(const T &t){
+void SmallHeap<T>::add(T t){
     if(map.count(t.id()) == 0){
         heap.push_back(t);
         int index = heap.size() - 1;
@@ -123,7 +123,7 @@ template<typename T>
 void SmallHeap<T>::del(int id){
     assert(map.count(id) == 1);
     int lastIndex = heap.size() - 1;
-    int index == map[id];
+    int index = map[id];
 
     if(index == lastIndex){
         heap.pop_back();
