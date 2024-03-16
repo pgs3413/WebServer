@@ -28,9 +28,10 @@ public:
     SmallHeap(){}
     ~SmallHeap(){}
 
-    void adjust(int id, int priority);
+    template<typename U>
+    bool adjust(int id, U priority);
     void add(T t);
-    void del(int id);
+    bool del(int id);
     T front();
     void pop();
     size_t size();
@@ -100,11 +101,15 @@ void SmallHeap<T>::adjust(size_t i){
 }
 
 template<typename T>
- void SmallHeap<T>::adjust(int id, int priority){
-    assert(map.count(id) == 1);
+template<typename U>
+bool SmallHeap<T>::adjust(int id, U priority){
+    if(map.count(id) != 1){
+        return false;
+    }
     size_t index = map[id];
     heap[index].priority() = priority;
     adjust(index);
+    return true;
  }
 
 template<typename T>
@@ -120,15 +125,17 @@ void SmallHeap<T>::add(T t){
 }
 
 template<typename T>
-void SmallHeap<T>::del(int id){
-    assert(map.count(id) == 1);
+bool SmallHeap<T>::del(int id){
+    if(map.count(id) != 1){
+        return false;
+    }
     int lastIndex = heap.size() - 1;
     int index = map[id];
 
     if(index == lastIndex){
         heap.pop_back();
         map.erase(id);
-        return;
+        return true;
     }
 
     //用最后一个替代，然后进行调整
@@ -139,7 +146,7 @@ void SmallHeap<T>::del(int id){
     map[t.id()] = index;
 
     adjust(index);
-
+    return true;
 }
 
 template<typename T>
