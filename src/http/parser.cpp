@@ -106,4 +106,10 @@ bool Parser::parseRequestLine(){
     return true;
 }
 
+void Parser::parseQueryParameter(){
+    std::string url = request.getUrl();
+    auto start = url.find('?');
+    
+}
+
 };

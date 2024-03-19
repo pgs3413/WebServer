@@ -28,6 +28,7 @@ private:
     long searchCRLF();
     long searchCharactor(char c, size_t start, size_t end);
     bool parseRequestLine();
+    void parseQueryParameter();
 
 public:
 

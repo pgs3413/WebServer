@@ -3,6 +3,7 @@
 
 #include<string>
 #include<unordered_set>
+#include<unordered_map>
 
 namespace http {
 
@@ -13,6 +14,8 @@ private:
     std::string url;
     std::string version;
 
+    std::unordered_map<std::string, std::string> parametersMap;
+
 public:
 
     static const std::unordered_set<std::string> METHOD_SET;
@@ -21,12 +24,17 @@ public:
     Request();
     ~Request();
 
-    const std::string & getMethod() const;
+    std::string  getMethod() const;
     void setMethod(const std::string &);
-    const std::string & getUrl() const;
+
+    std::string getUrl() const;
     void setUrl(const std::string &);
-    const std::string & getVersion() const;
+
+    std::string getVersion() const;
     void setVersion(const std::string &);
+
+    std::string getParameter(const std::string &);
+    void setParameter(const std::string &, const std::string &);
 
 };
 
