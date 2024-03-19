@@ -1,5 +1,5 @@
 cc = g++
 obj = $(dir)/log/*.cpp $(dir)/pool/*.cpp \
 $(dir)/epoll/*.cpp $(dir)/socket/*.cpp $(dir)/timer/*.cpp \
-$(dir)/http/*.cpp
+$(dir)/http/*.cpp $(dir)/utils/*.cpp
 option = -lpthread 

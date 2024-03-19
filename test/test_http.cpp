@@ -38,6 +38,10 @@ int main(){
     cout << "method: " << request.getMethod() << endl;
     cout << "url: " << request.getUrl() << endl;
     cout << "version: " << request.getVersion() << endl;
+    cout << "parameters: " << endl;
+    for(auto &key : request.getParameterNames()){
+        cout << key << " " << request.getParameter(key) << endl;
+    }
 
     out:
     conn.close();

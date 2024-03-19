@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "../utils/stringutils.h"
 
 namespace http {
 
@@ -101,6 +102,7 @@ bool Parser::parseRequestLine(){
     }
     request.setVersion(version);
 
+    parseQueryParameter();
     pos = tail + 1;
     state = HEADERS;
     return true;
@@ -109,7 +111,22 @@ bool Parser::parseRequestLine(){
 void Parser::parseQueryParameter(){
     std::string url = request.getUrl();
     auto start = url.find('?');
-    
+    if(start == std::string::npos){
+        return;
+    }
+    request.setUrl(url.substr(0, start));
+    std::string parameters = url.substr(start + 1, url.size() - start - 1);
+    auto kvList = split(parameters, '&');
+    for(auto &kv : kvList){
+        if(kv.empty()) continue;;
+        auto equalIndex = kv.find('=');
+        if(equalIndex == std::string::npos){
+            request.setParameter(kv, "");
+        }else{
+            request.setParameter(kv.substr(0, equalIndex), 
+            kv.substr(equalIndex + 1, kv.size() - equalIndex - 1));
+        }
+    } 
 }
 
 };

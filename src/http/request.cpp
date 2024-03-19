@@ -44,6 +44,14 @@ void Request::setVersion(const std::string &version){
 std::string Request::getParameter(const std::string &key){
     return parametersMap[key];
 }
+
+std::vector<std::string> Request::getParameterNames(){
+    std::vector<std::string> vec;
+    for(auto &pair : parametersMap){
+        vec.push_back(pair.first);
+    }
+    return vec;
+}
     
 void Request::setParameter(const std::string &key, const std::string &value){
     parametersMap[key] = value;

@@ -4,6 +4,7 @@
 #include<string>
 #include<unordered_set>
 #include<unordered_map>
+#include<vector>
 
 namespace http {
 
@@ -34,6 +35,7 @@ public:
     void setVersion(const std::string &);
 
     std::string getParameter(const std::string &);
+    std::vector<std::string> getParameterNames();
     void setParameter(const std::string &, const std::string &);
 
 };
