@@ -7,6 +7,7 @@
 #include<vector>
 #include<assert.h>
 #include<errno.h>
+#include<memory>
 
 namespace http {
 
@@ -14,14 +15,9 @@ class Connction {
 
 private:
 
-    bool isClose;
-
     Socket socket;
-
-    std::vector<char> readBuf;
-    Request request;
-    Parser parser;
-
+    std::unique_ptr<Request> request;
+    std::unique_ptr<Parser> parser;
 
 public:
 
@@ -29,10 +25,9 @@ public:
     ~Connction();
     operator int();
 
+    void init();
     Request & getRequest();
-
     bool processRequest();
-    void close();
 
 };
 

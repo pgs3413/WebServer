@@ -3,17 +3,15 @@
 namespace http {
 
 Connction::Connction(Socket &&socket_) : 
-isClose(false),
-socket(std::move(socket_)),
-readBuf(),
-request(),
-parser(readBuf, request)
+request(nullptr),
+parser(nullptr),
+socket(std::move(socket_))
 {
     socket.setNonBlock();
 }
 
 Connction::~Connction(){
-    close();
+    socket.closeSocket();
 }
 
 Connction::operator int(){
@@ -21,7 +19,14 @@ Connction::operator int(){
 }
 
 Request & Connction::getRequest(){
-    return request;
+    return *request;
+}
+
+void Connction::init(){
+    std::unique_ptr<Request> request_temp(new Request());
+    request = std::move(request_temp);
+    std::unique_ptr<Parser> parser_temp(new Parser(request->buf, *request));
+    parser = std::move(parser_temp);
 }
 
 /*
@@ -30,14 +35,14 @@ TRUE包括请求成功、请求失败（解析失败、内部失败等），此�
 FALSE指的是请求体还未读完，需要继续等待后续读取
 */
 bool Connction::processRequest(){
-    assert(isClose == false);
+    assert(request != nullptr);
     char buf[1024];
     int len = -1;
     long count = 0;
     while ((len = socket.readSocket(buf,1024)) > 0)
     {
         count += len;
-        readBuf.insert(readBuf.end(), buf, buf + len);
+        request->buf.insert(request->buf.end(), buf, buf + len);
     }
     if(count == 0){
         return false;
@@ -45,21 +50,14 @@ bool Connction::processRequest(){
     if(len == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK)){
         return true; // 内部错误
     }
-    if(!parser.parse()){
-        if(parser.isFinish()) {
+    if(!parser->parse()){
+        if(parser->isFinish()) {
             return true; //解析错误
-        }else{
+        }else {
             return false;
         }
     }
     return true;
-}
-
-void Connction::close(){
-    if(!isClose){
-        isClose = true;
-        socket.closeSocket();
-    }
 }
 
 };

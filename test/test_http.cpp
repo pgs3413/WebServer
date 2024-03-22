@@ -1,6 +1,5 @@
 #include"../src/http/connection.h"
 #include"../src/socket/socket.h"
-#include"../src/epoll/epoller.h"
 #include<iostream>
 
 using std::cout;
@@ -15,25 +14,12 @@ int main(){
 
     http::Connction conn(std::move(socket));
 
-    Epoller epoller;
-    epoller.addFd(conn, true, false, true, true, false);
+    conn.init();
 
     cout << "start to read..." << endl;
 
-    while (epoller.wait())
-    {
-        for(auto event : epoller){
-            if(event.getFd() == conn){
-                if(event.isIn()){
-                    if(conn.processRequest()){
-                        goto done;
-                    }
-                }
-            }
-        }
-    }
-
-    done:
+    while (!conn.processRequest());   
+    
     http::Request & request = conn.getRequest();
     cout << "method: " << request.getMethod() << endl;
     cout << "url: " << request.getUrl() << endl;
@@ -44,7 +30,6 @@ int main(){
     }
 
     out:
-    conn.close();
     server.closeSocket();
     cout << "bye." << endl;
 

@@ -11,6 +11,9 @@ namespace http {
 class Request {
 
 private:
+
+    std::vector<char> buf;
+
     std::string method;
     std::string url;
     std::string version;
@@ -18,6 +21,8 @@ private:
     std::unordered_map<std::string, std::string> parametersMap;
 
 public:
+
+    friend class Connction;
 
     static const std::unordered_set<std::string> METHOD_SET;
     static const std::unordered_set<std::string> VERSION_SET; 
