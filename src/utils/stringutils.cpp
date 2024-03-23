@@ -17,3 +17,21 @@ split(const std::string &str, char delimiter){
     vec.push_back(str.substr(start, size - start));
     return vec;
 }
+
+bool isNumber(const std::string &s){
+    char *endPtr;
+    long result = std::strtol(s.c_str(), &endPtr, 0);
+    if(endPtr == s.c_str() || *endPtr != '\0'){
+        return false;
+    }
+    return true;
+}
+
+long toNumber(const std::string &s, long defaultValue){
+    char *endPtr;
+    long result = std::strtol(s.c_str(), &endPtr, 0);
+    if(endPtr == s.c_str() || *endPtr != '\0'){
+        return defaultValue;
+    }
+    return result;
+}

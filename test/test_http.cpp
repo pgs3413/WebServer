@@ -32,6 +32,15 @@ int main(){
     for(auto &key : request.getHeaderNames()){
         cout << key << " " << request.getHeader(key) << endl;
     }
+    cout << "body: " << endl;
+    char buf[1024];
+    std::string s;
+    int len = 0;
+    while ((len = request.getBody(buf, 1024)) > 0)
+    {
+        s.append(buf, len);
+    }
+    cout << s << endl;
 
     server.closeSocket();
     cout << "bye." << endl;

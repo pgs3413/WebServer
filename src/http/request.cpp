@@ -11,6 +11,10 @@ const std::unordered_set<std::string> Request::VERSION_SET({
     "1.1",
     });
 
+const std::string Request::CONTENT_LENGTH_KEY = "Content-Length";
+const std::string Request::CONTENT_TYPE_KEY = "Content-Type";
+
+
 Request::Request(){
 }
 
@@ -71,6 +75,17 @@ std::vector<std::string> Request::getHeaderNames(){
     
 void Request::setHeader(const std::string &key, const std::string &value){
     headersMap[key] = value;
+}
+
+size_t Request::getBody(char *buf_ ,size_t bufSize){
+    if(bodySize == 0){
+        return 0;
+    }
+    size_t count = bodySize > bufSize ? bufSize : bodySize;
+    std::memcpy(buf_, &(buf[bodyStart]), count);
+    bodyStart += count;
+    bodySize -= count;
+    return count;
 }
 
 };

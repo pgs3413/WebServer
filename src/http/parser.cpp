@@ -24,6 +24,20 @@ bool Parser::isWrong(){
     return state == WRONG;
 }
 
+void Parser::parseParameter(const std::string &parameters){
+    auto kvList = split(parameters, '&');
+    for(auto &kv : kvList){
+        if(kv.empty()) continue;;
+        auto equalIndex = kv.find('=');
+        if(equalIndex == std::string::npos){
+            request.setParameter(kv, "");
+        }else{
+            request.setParameter(kv.substr(0, equalIndex), 
+            kv.substr(equalIndex + 1, kv.size() - equalIndex - 1));
+        }
+    }
+}
+
 long Parser::searchCRLF(){
     long result = -1;
     size_t start = pos;
@@ -62,7 +76,7 @@ void Parser::parse(){
         if(!parseHeaders()) return;
     }
     if(state == BODY){
-        state = SUCCESS;
+        if(!parseBody()) return;
     }
 }
 
@@ -130,17 +144,7 @@ void Parser::parseQueryParameter(){
     }
     request.setUrl(url.substr(0, start));
     std::string parameters = url.substr(start + 1, url.size() - start - 1);
-    auto kvList = split(parameters, '&');
-    for(auto &kv : kvList){
-        if(kv.empty()) continue;;
-        auto equalIndex = kv.find('=');
-        if(equalIndex == std::string::npos){
-            request.setParameter(kv, "");
-        }else{
-            request.setParameter(kv.substr(0, equalIndex), 
-            kv.substr(equalIndex + 1, kv.size() - equalIndex - 1));
-        }
-    } 
+    parseParameter(parameters);
 }
 
 bool Parser::parseHeaders(){
@@ -150,7 +154,7 @@ bool Parser::parseHeaders(){
     if(tail == -1) return false;
 
     if(tail == pos + 1){ //最后的/r/n
-        pos + tail + 1;
+        pos = tail + 1;
         state = BODY;
         return true;
     }
@@ -172,6 +176,40 @@ bool Parser::parseHeaders(){
     request.setHeader(key, value);
     pos = tail + 1;
     return true;
+}
+
+bool Parser::parseBody(){
+    assert(state == BODY);
+
+    long size = toNumber(request.getHeader(Request::CONTENT_LENGTH_KEY), 0);
+    if(size == 0){
+        state = SUCCESS;
+        request.bodySize = 0;
+        return true;
+    }
+
+    if(buf.size() < pos + size){
+        return false;
+    }
+
+    request.bodyStart = pos;
+    request.bodySize = size;
+
+    parseContentParameter(size);
+
+    state = SUCCESS;
+    return true;
+
+}
+
+void Parser::parseContentParameter(long size){
+    if(request.getHeader(Request::CONTENT_TYPE_KEY) 
+    != "application/x-www-form-urlencoded"){
+        return;
+    }
+    std::string parameters(buf.begin() + pos, buf.begin() + pos + size);
+    auto kvList = split(parameters, '&');
+    parseParameter(parameters);
 }
 
 };

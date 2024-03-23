@@ -5,6 +5,7 @@
 #include<unordered_set>
 #include<unordered_map>
 #include<vector>
+#include<cstring>
 
 namespace http {
 
@@ -21,12 +22,19 @@ private:
     std::unordered_map<std::string, std::string> parametersMap;
     std::unordered_map<std::string, std::string> headersMap;
 
+    size_t bodyStart = 0;
+    size_t bodySize = 0;
+
 public:
 
     friend class Connction;
+    friend class Parser;
 
     static const std::unordered_set<std::string> METHOD_SET;
-    static const std::unordered_set<std::string> VERSION_SET; 
+    static const std::unordered_set<std::string> VERSION_SET;
+
+    static const std::string CONTENT_LENGTH_KEY;
+    static const std::string CONTENT_TYPE_KEY;
 
     Request();
     ~Request();
@@ -47,6 +55,8 @@ public:
     std::string getHeader(const std::string &);
     std::vector<std::string> getHeaderNames();
     void setHeader(const std::string &, const std::string &);
+
+    size_t getBody(char *buf_, size_t bufSize);
 
 };
 
