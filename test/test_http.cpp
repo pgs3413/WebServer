@@ -1,11 +1,16 @@
 #include"../src/http/connection.h"
 #include"../src/socket/socket.h"
+#include "../src/http/router.h"
+#include "../src/handler/syshandler.h"
 #include<iostream>
 
 using std::cout;
 using std::endl;
 
 int main(){
+
+    http::Router::setErrHandler(_400Handler);
+    http::Router::setDefaultHandler(_404Handler);
 
     ServerSocket server(8080);
     cout << "start to listen..." << endl;
@@ -41,6 +46,9 @@ int main(){
         s.append(buf, len);
     }
     cout << s << endl;
+
+    cout << "start to write..." << endl;
+    conn.processResponse();
 
     server.closeSocket();
     cout << "bye." << endl;

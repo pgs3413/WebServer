@@ -2,9 +2,13 @@
 
 namespace http {
 
+std::string Connction::CRLF = "\r\n";
+
 Connction::Connction(Socket &&socket_) : 
 request(nullptr),
 parser(nullptr),
+response(nullptr),
+state(NOT_INITIAL),
 socket(std::move(socket_))
 {
     socket.setNonBlock();
@@ -23,10 +27,13 @@ Request & Connction::getRequest(){
 }
 
 void Connction::init(){
+    state = REQUEST;
     std::unique_ptr<Request> request_temp(new Request());
     request = std::move(request_temp);
     std::unique_ptr<Parser> parser_temp(new Parser(request->buf, *request));
     parser = std::move(parser_temp);
+    std::unique_ptr<Response> response_temp(new Response());
+    response = std::move(response_temp);
 }
 
 /*
@@ -35,7 +42,8 @@ TRUE包括请求成功、请求失败（解析失败、内部失败等），此�
 FALSE指的是请求体还未读完，需要继续等待后续读取
 */
 bool Connction::processRequest(){
-    assert(request != nullptr);
+    assert(state == REQUEST);
+    assert(request != nullptr && parser != nullptr && response != nullptr);
     char buf[1024];
     int len = -1;
     long count = 0;
@@ -53,13 +61,47 @@ bool Connction::processRequest(){
     parser -> parse();
     if(parser -> isFinish()){
         if(parser -> isSuccess()){
-
-        }else{
-
+            Router::getDefaultHandler()(*request, *response);
+        }else {
+            Router::getErrHandler()(*request, *response);
         }
+        state = RESPONSE;
         return true;
     }
     return false;
+}
+
+std::string Connction::getResponseHeader(){
+    std::string header;
+    header += "HTTP/";
+    header += response->getVersion();
+    header += " ";
+    header += std::to_string(response->getStatus());
+    header += Response::getStatusStr(response->getStatus());
+    header += CRLF;
+    for(auto &key : response->getHeaderNames()){
+        header += key;
+        header += ": ";
+        header += response->getHeader(key);
+        header += CRLF;
+    }
+    header += CRLF;
+    return header;
+}
+
+void Connction::processResponse(){
+    assert(state == RESPONSE);
+    assert(response != nullptr);
+
+    std::string header = getResponseHeader();
+
+    struct iovec vecs[2] = {
+        {.iov_base = (void *)header.c_str(), .iov_len = header.size()},
+        {.iov_base = (void *)(&(response -> buf[0])), .iov_len = response -> buf.size()}
+    };
+
+    socket.writevSocket(vecs, 2);
+    state = DONE;
 }
 
 };

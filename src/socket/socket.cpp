@@ -68,3 +68,11 @@ int Socket::writeSocket(const void *buf, size_t size){
     }
     return write(fd, buf, size);
 }
+
+
+int Socket::writevSocket(const struct iovec *iov, int iovcnt){
+    if(fd < 0){
+        throw std::logic_error("socket not yet created");
+    }
+    return writev(fd, iov, iovcnt);
+}

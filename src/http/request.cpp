@@ -2,14 +2,14 @@
 
 namespace http {
 
-const std::unordered_set<std::string> Request::METHOD_SET({
+const std::unordered_set<std::string> Request::METHOD_SET = {
     "GET", 
     "POST",
-    });
+    };
 
-const std::unordered_set<std::string> Request::VERSION_SET({
+const std::unordered_set<std::string> Request::VERSION_SET = {
     "1.1",
-    });
+    };
 
 const std::string Request::CONTENT_LENGTH_KEY = "Content-Length";
 const std::string Request::CONTENT_TYPE_KEY = "Content-Type";

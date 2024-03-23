@@ -2,6 +2,7 @@
 #define SERVER_SOCKET_H
 
 #include<sys/socket.h>
+#include<sys/uio.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<unistd.h>
@@ -30,7 +31,8 @@ public:
 
 class Socket : public _Socket {
     
-public:
+public:  
+
     friend class ServerSocket;
     explicit Socket(int fd_ = -1);
     Socket(const std::string &host_, unsigned short port_);
@@ -44,6 +46,7 @@ public:
 
     int readSocket(void *buf, size_t size);
     int writeSocket(const void *buf, size_t size);
+    int writevSocket(const struct iovec *iov, int iovcnt);
 
 };
 
