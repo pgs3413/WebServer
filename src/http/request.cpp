@@ -13,6 +13,7 @@ const std::unordered_set<std::string> Request::VERSION_SET = {
 
 const std::string Request::CONTENT_LENGTH_KEY = "Content-Length";
 const std::string Request::CONTENT_TYPE_KEY = "Content-Type";
+const std::string Request::CONNECTION_KEY = "Connection";
 
 
 Request::Request(){

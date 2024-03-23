@@ -42,6 +42,8 @@ public:
     bool processRequest();
     void processResponse();
 
+    bool isKeepAlive();
+
 };
 
 

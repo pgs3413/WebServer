@@ -19,36 +19,45 @@ int main(){
 
     http::Connction conn(std::move(socket));
 
-    conn.init();
+    int count = 1; // 测试一次keep-alive
 
-    cout << "start to read..." << endl;
-
-    while (!conn.processRequest());   
-    
-    http::Request & request = conn.getRequest();
-    cout << "method: " << request.getMethod() << endl;
-    cout << "url: " << request.getUrl() << endl;
-    cout << "version: " << request.getVersion() << endl;
-    cout << "parameters: " << endl;
-    for(auto &key : request.getParameterNames()){
-        cout << key << " " << request.getParameter(key) << endl;
-    }
-    cout << "headers: " << endl;
-    for(auto &key : request.getHeaderNames()){
-        cout << key << " " << request.getHeader(key) << endl;
-    }
-    cout << "body: " << endl;
-    char buf[1024];
-    std::string s;
-    int len = 0;
-    while ((len = request.getBody(buf, 1024)) > 0)
+    while (count >= 0)
     {
-        s.append(buf, len);
-    }
-    cout << s << endl;
+        conn.init();
 
-    cout << "start to write..." << endl;
-    conn.processResponse();
+        cout << "start to read..." << " (" << count << ")" << endl;
+
+        while (!conn.processRequest());   
+        
+        http::Request & request = conn.getRequest();
+        cout << "method: " << request.getMethod() << endl;
+        cout << "url: " << request.getUrl() << endl;
+        cout << "version: " << request.getVersion() << endl;
+        cout << "parameters: " << endl;
+        for(auto &key : request.getParameterNames()){
+            cout << key << " " << request.getParameter(key) << endl;
+        }
+        cout << "headers: " << endl;
+        for(auto &key : request.getHeaderNames()){
+            cout << key << " " << request.getHeader(key) << endl;
+        }
+        cout << "body: " << endl;
+        char buf[1024];
+        std::string s;
+        int len = 0;
+        while ((len = request.getBody(buf, 1024)) > 0)
+        {
+            s.append(buf, len);
+        }
+        cout << s << endl;
+
+        cout << "start to write..." << " (" << count << ")" << endl;
+        conn.processResponse();
+
+        if(!conn.isKeepAlive()) break;
+        count--;        
+    }
+    
 
     server.closeSocket();
     cout << "bye." << endl;

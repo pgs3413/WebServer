@@ -93,6 +93,8 @@ void Connction::processResponse(){
     assert(state == RESPONSE);
     assert(response != nullptr);
 
+    response -> setHeader("Content-Length", std::to_string(response->buf.size()));
+    
     std::string header = getResponseHeader();
 
     struct iovec vecs[2] = {
@@ -102,6 +104,11 @@ void Connction::processResponse(){
 
     socket.writevSocket(vecs, 2);
     state = DONE;
+}
+
+bool Connction::isKeepAlive(){
+    assert(request != nullptr);
+    return request -> getHeader(Request::CONNECTION_KEY) == "keep-alive";
 }
 
 };

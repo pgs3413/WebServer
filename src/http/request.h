@@ -35,6 +35,7 @@ public:
 
     static const std::string CONTENT_LENGTH_KEY;
     static const std::string CONTENT_TYPE_KEY;
+    static const std::string CONNECTION_KEY;
 
     Request();
     ~Request();

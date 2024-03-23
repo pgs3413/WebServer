@@ -11,6 +11,7 @@ void _404Handler(Request &req, Response &resp){
     std::string body;
     body += "<html>\n";
     body += " <title>404 Not Found</title>\n";
+    body += " <link rel=\"icon\" href=\"icon.ico\" />\n";
     body += " <body>\n";
     body += "  <h1>404 Not Found</h1>\n";
     body += "  <p>Sorry, the page ";
