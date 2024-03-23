@@ -13,7 +13,15 @@ Parser::~Parser()
 }
 
 bool Parser::isFinish(){
-    return state == FINISH;
+    return state == SUCCESS || state == WRONG;
+}
+
+bool Parser::isSuccess(){
+    return state == SUCCESS;
+}
+
+bool Parser::isWrong(){
+    return state == WRONG;
 }
 
 long Parser::searchCRLF(){
@@ -46,15 +54,21 @@ long Parser::searchCharactor(char c, size_t start, size_t end){
     return result;
 }
 
-bool Parser::parse(){
-    assert(state != FINISH);
+void Parser::parse(){
     if(state == REQUEST_LINE){
-        if(!parseRequestLine()) return false;
+        if(!parseRequestLine()) return;
     }
-    return true;
+    while(state == HEADERS){
+        if(!parseHeaders()) return;
+    }
+    if(state == BODY){
+        state = SUCCESS;
+    }
 }
 
-
+/*
+ 所有的parse true代表可以往下继续走,false代表需要下次执行
+*/
 
 bool Parser::parseRequestLine(){
 
@@ -65,40 +79,40 @@ bool Parser::parseRequestLine(){
 
     long methodTail = searchCharactor(' ', pos, tail);
     if(methodTail == -1){
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
 
     std::string method(buf.begin() + pos, buf.begin() + methodTail);
     if(Request::METHOD_SET.count(method) == 0){
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
     request.setMethod(method);
 
     long urlTail = searchCharactor(' ', methodTail + 1, tail);
     if(urlTail == -1) {
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
 
     std::string url(buf.begin() + methodTail + 1, buf.begin() + urlTail);
     if(url.empty() || url[0] != '/'){
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
     request.setUrl(url);
 
     long versionTail = searchCharactor('\r', urlTail + 1, tail);
     if(versionTail == -1) {
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
 
     std::string version(buf.begin() + urlTail + 6, buf.begin() + versionTail);
     if(Request::VERSION_SET.count(version) == 0){
-        state = FINISH;
-        return false;
+        state = WRONG;
+        return true;
     }
     request.setVersion(version);
 
@@ -127,6 +141,37 @@ void Parser::parseQueryParameter(){
             kv.substr(equalIndex + 1, kv.size() - equalIndex - 1));
         }
     } 
+}
+
+bool Parser::parseHeaders(){
+    assert(state == HEADERS);
+
+    long tail = searchCRLF(); 
+    if(tail == -1) return false;
+
+    if(tail == pos + 1){ //最后的/r/n
+        pos + tail + 1;
+        state = BODY;
+        return true;
+    }
+
+    long colonIndex = searchCharactor(':', pos, tail);
+    if(colonIndex == -1){
+        state = WRONG;
+        return true;
+    }
+
+    std::string key(buf.begin() + pos, buf.begin() + colonIndex);
+    if(key.empty()){
+        state = WRONG;
+        return true;
+    }
+
+    std::string value(buf.begin() + colonIndex + 2, buf.begin() + tail - 1);
+
+    request.setHeader(key, value);
+    pos = tail + 1;
+    return true;
 }
 
 };

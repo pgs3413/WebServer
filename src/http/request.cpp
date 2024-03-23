@@ -57,4 +57,20 @@ void Request::setParameter(const std::string &key, const std::string &value){
     parametersMap[key] = value;
 }
 
+std::string Request::getHeader(const std::string &key){
+    return headersMap[key];
+}
+
+std::vector<std::string> Request::getHeaderNames(){
+    std::vector<std::string> vec;
+    for(auto &pair : headersMap){
+        vec.push_back(pair.first);
+    }
+    return vec;
+}
+    
+void Request::setHeader(const std::string &key, const std::string &value){
+    headersMap[key] = value;
+}
+
 };

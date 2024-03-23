@@ -19,6 +19,7 @@ private:
     std::string version;
 
     std::unordered_map<std::string, std::string> parametersMap;
+    std::unordered_map<std::string, std::string> headersMap;
 
 public:
 
@@ -42,6 +43,10 @@ public:
     std::string getParameter(const std::string &);
     std::vector<std::string> getParameterNames();
     void setParameter(const std::string &, const std::string &);
+
+    std::string getHeader(const std::string &);
+    std::vector<std::string> getHeaderNames();
+    void setHeader(const std::string &, const std::string &);
 
 };
 

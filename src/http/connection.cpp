@@ -50,14 +50,16 @@ bool Connction::processRequest(){
     if(len == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK)){
         return true; // 内部错误
     }
-    if(!parser->parse()){
-        if(parser->isFinish()) {
-            return true; //解析错误
-        }else {
-            return false;
+    parser -> parse();
+    if(parser -> isFinish()){
+        if(parser -> isSuccess()){
+
+        }else{
+
         }
+        return true;
     }
-    return true;
+    return false;
 }
 
 };

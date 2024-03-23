@@ -15,7 +15,8 @@ private:
         REQUEST_LINE,
         HEADERS,
         BODY,
-        FINISH,
+        SUCCESS,
+        WRONG,
     };
 
     STATE state ;
@@ -29,13 +30,16 @@ private:
     long searchCharactor(char c, size_t start, size_t end);
     bool parseRequestLine();
     void parseQueryParameter();
+    bool parseHeaders();
 
 public:
 
     Parser(std::vector<char> &_buf, Request &_request);
     ~Parser();
-    bool parse();
+    void parse();
     bool isFinish();
+    bool isSuccess();
+    bool isWrong();
 
 };
 

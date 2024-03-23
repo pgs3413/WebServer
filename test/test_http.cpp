@@ -28,8 +28,11 @@ int main(){
     for(auto &key : request.getParameterNames()){
         cout << key << " " << request.getParameter(key) << endl;
     }
+    cout << "headers: " << endl;
+    for(auto &key : request.getHeaderNames()){
+        cout << key << " " << request.getHeader(key) << endl;
+    }
 
-    out:
     server.closeSocket();
     cout << "bye." << endl;
 
