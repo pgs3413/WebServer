@@ -9,8 +9,14 @@ using std::endl;
 
 int main(){
 
+    auto helloHandler = [](http::Request &req, http::Response &resp){
+        // resp.setHeader("Content-Type", "text/plain");
+        resp.write("Hello, World");
+    };
+
     http::Router::setErrHandler(_400Handler);
     http::Router::setDefaultHandler(_404Handler);
+    http::Router::addHandler("/hello", helloHandler);
 
     ServerSocket server(8080);
     cout << "start to listen..." << endl;

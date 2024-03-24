@@ -115,6 +115,8 @@ bool Parser::parseRequestLine(){
         state = WRONG;
         return true;
     }
+
+    if(url == "/") url = request.getDefaultPage();
     request.setUrl(url);
 
     long versionTail = searchCharactor('\r', urlTail + 1, tail);

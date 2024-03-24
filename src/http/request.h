@@ -59,6 +59,8 @@ public:
 
     size_t getBody(char *buf_, size_t bufSize);
 
+    std::string getDefaultPage();
+
 };
 
 

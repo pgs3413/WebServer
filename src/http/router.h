@@ -4,6 +4,8 @@
 #include<functional>
 #include "request.h"
 #include "response.h"
+#include "../queue/routetree.h"
+#include <string>
 
 namespace http {
 
@@ -17,6 +19,8 @@ private:
     static Handler errHandler;
     static Handler defaultHandler;
 
+    static RouteTree<Handler> routeTree;
+
 public:
 
     static void setErrHandler(Handler handler);
@@ -25,6 +29,8 @@ public:
     static void setDefaultHandler(Handler handler);
     static Handler getDefaultHandler();
 
+    static void addHandler(const std::string &url, Handler handler);
+    static void route(Request &, Response &);
 };
 
 };

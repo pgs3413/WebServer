@@ -61,7 +61,7 @@ bool Connction::processRequest(){
     parser -> parse();
     if(parser -> isFinish()){
         if(parser -> isSuccess()){
-            Router::getDefaultHandler()(*request, *response);
+            Router::route(*request, *response);
         }else {
             Router::getErrHandler()(*request, *response);
         }

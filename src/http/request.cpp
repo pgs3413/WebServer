@@ -89,4 +89,8 @@ size_t Request::getBody(char *buf_ ,size_t bufSize){
     return count;
 }
 
+std::string Request::getDefaultPage(){
+    return "/index.html";
+}
+
 };
