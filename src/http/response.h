@@ -4,6 +4,7 @@
 #include<string>
 #include<unordered_map>
 #include<vector>
+#include<functional>
 
 namespace http {
 
@@ -27,6 +28,15 @@ private:
 
     std::vector<char> buf;
 
+    typedef std::function<void(void*,size_t)> BufHandler;
+    void *_buf;
+    size_t _bufSize;
+    BufHandler _bufHandler;
+
+    void postResponse();
+    void * getBuf();
+    size_t getBufSize();
+
 public:
 
     friend class Connction;
@@ -48,6 +58,8 @@ public:
 
     void write(char *buf_, size_t bufSize);
     void write(const std::string &s);
+    void write(void *buf_, size_t bufSize, BufHandler handler);
+
 };
 
 };

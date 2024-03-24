@@ -13,7 +13,8 @@ std::string Response::getStatusStr(int status){
 
 Response::Response() : 
 status(OK),
-version("1.1")
+version("1.1"),
+_buf(nullptr)
 {
 }
 
@@ -59,6 +60,28 @@ void Response::write(char *buf_, size_t bufSize){
 
 void Response::write(const std::string &s){
     buf.insert(buf.end(), s.c_str(), s.c_str() + s.size());
+}
+
+void Response::write(void *buf_, size_t bufSize, BufHandler handler){
+    _buf = buf_;
+    _bufSize = bufSize;
+    _bufHandler = handler;
+}
+
+void Response::postResponse(){
+    if(_buf != nullptr){
+        _bufHandler(_buf, _bufSize);
+    }
+}
+
+void * Response::getBuf(){
+    if(_buf != nullptr) return _buf;
+    return (void *)(&buf[0]);
+}
+
+size_t Response::getBufSize(){
+    if(_buf != nullptr) return _bufSize;
+    return buf.size();
 }
 
 };

@@ -93,16 +93,17 @@ void Connction::processResponse(){
     assert(state == RESPONSE);
     assert(response != nullptr);
 
-    response -> setHeader("Content-Length", std::to_string(response->buf.size()));
+    response -> setHeader("Content-Length", std::to_string(response -> getBufSize()));
     
     std::string header = getResponseHeader();
 
     struct iovec vecs[2] = {
         {.iov_base = (void *)header.c_str(), .iov_len = header.size()},
-        {.iov_base = (void *)(&(response -> buf[0])), .iov_len = response -> buf.size()}
+        {.iov_base = response -> getBuf(), .iov_len = response -> getBufSize()}
     };
 
     socket.writevSocket(vecs, 2);
+    response -> postResponse();
     state = DONE;
 }
 
