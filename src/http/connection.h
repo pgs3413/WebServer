@@ -43,6 +43,9 @@ public:
     void processResponse();
 
     bool isKeepAlive();
+    
+    std::string getAddress();
+    unsigned short getPort();
 
 };
 

@@ -17,6 +17,10 @@ void _Socket::closeSocket(){
     }
 }
 
+_Socket::operator int(){
+    return fd;
+}
+
 bool _Socket::setNonBlock(bool isNonBlock){
     if(fd < 0) {
         throw std::logic_error("socket not yet created");
@@ -50,4 +54,14 @@ bool _Socket::setLinger(int level){
     if(ret == -1) return false;
     return true;
 
+}
+
+std::string _Socket::getAddress(){
+    char buf[16] = {0};
+    inet_ntop(AF_INET, &host, buf, 16);
+    return std::string(buf); 
+}
+
+unsigned short _Socket::getPort(){
+    return ntohs(port);
 }

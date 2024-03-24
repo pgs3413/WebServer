@@ -77,7 +77,8 @@ public:
 
 template <typename... Args>
 void Log::produce(Level level_, const string &format, Args... args){
-    assert(initialized == true);
+    // assert(initialized == true);
+    if(!initialized) return;
     if(level_ < level) return;
     ostringstream stream;
     msgStart(stream, level_);

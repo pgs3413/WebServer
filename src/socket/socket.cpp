@@ -51,10 +51,6 @@ Socket & Socket::operator=(Socket &&socket){
     return *this;
 }
 
-Socket::operator int(){
-    return fd;
-}
-
 int Socket::readSocket(void *buf, size_t size){
     if(fd < 0){
         throw std::logic_error("socket not yet created");

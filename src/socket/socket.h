@@ -26,6 +26,9 @@ public:
     void closeSocket();
     bool setNonBlock(bool isNonBlock = true);
     bool setLinger(int level = 0);
+    operator int();
+    std::string getAddress();
+    unsigned short getPort();
 
 };
 
@@ -42,7 +45,6 @@ public:
     
     Socket & operator=(const Socket &) = delete;
     Socket & operator=(Socket &&socket);
-    operator int();
 
     int readSocket(void *buf, size_t size);
     int writeSocket(const void *buf, size_t size);

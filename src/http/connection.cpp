@@ -112,4 +112,12 @@ bool Connction::isKeepAlive(){
     return request -> getHeader(Request::CONNECTION_KEY) == "keep-alive";
 }
 
+std::string Connction::getAddress(){
+    return socket.getAddress();
+}
+
+unsigned short Connction::getPort(){
+    return socket.getPort();
+}
+
 };

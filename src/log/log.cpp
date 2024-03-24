@@ -10,6 +10,7 @@ namespace log {
 Log::Log(){}
 
 Log::~Log(){
+    if(!initialized) return;
     queue->close();
     consumer->join();
     if(toFile) fclose(fp);
