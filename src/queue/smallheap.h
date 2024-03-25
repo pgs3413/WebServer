@@ -51,6 +51,7 @@ template<typename T>
 void SmallHeap<T>::up(size_t index){
     assert(index >= 0 && index < heap.size());
     size_t i = index;
+    if(i == 0) return;
     size_t j = (i - 1) / 2; // 父节点为（i - 1) / 2
     while (j >= 0)
     {

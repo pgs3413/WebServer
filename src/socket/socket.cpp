@@ -40,6 +40,7 @@ Socket::Socket(const std::string &host_, unsigned short port_) : _Socket(-1) {
 }
 
 Socket::~Socket(){
+    closeSocket();
 }
 
 Socket & Socket::operator=(Socket &&socket){

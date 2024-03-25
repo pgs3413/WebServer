@@ -51,6 +51,7 @@ ServerSocket::ServerSocket(unsigned short port_, bool reuseAddress, int rcvBufSi
 }
 
 ServerSocket::~ServerSocket(){
+    closeSocket();
 }
 
 
