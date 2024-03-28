@@ -30,12 +30,13 @@ int main(){
 
     http::Connction conn(std::move(socket));
 
-    int count = 1; // 测试一次keep-alive
+    int count = 0;
 
-    while (count >= 0)
+    while (true)
     {
+        count++;
         conn.init();
-
+        
         cout << "start to read..." << " (" << count << ")" << endl;
 
         while (!conn.processRequest());   
@@ -65,8 +66,7 @@ int main(){
         cout << "start to write..." << " (" << count << ")" << endl;
         conn.processResponse();
 
-        if(!conn.isKeepAlive()) break;
-        count--;        
+        if(!conn.isKeepAlive()) break;     
     }
     
 

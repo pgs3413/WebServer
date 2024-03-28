@@ -143,6 +143,7 @@ void Epoller::makeEvent(struct kevent * ev, int fd, bool in, bool out, bool clos
 }
 
 bool Epoller::addFd(int fd, bool in, bool out, bool close, bool et, bool oneshot){
+  if(fd < 0) return false;
   struct kevent event;
   makeEvent(&event, fd, in, out, close, et, oneshot);
   int result = kevent(kqFd, &event, 1, nullptr, 0, nullptr);
@@ -151,12 +152,14 @@ bool Epoller::addFd(int fd, bool in, bool out, bool close, bool et, bool oneshot
 }
 
 bool Epoller::modFd(int fd, bool in, bool out, bool close, bool et, bool oneshot){
+  if(fd < 0) return false;
   return addFd(fd, in, out, close, et, oneshot);
 }
 
 bool Epoller::delFd(int fd){
+  if(fd < 0) return false;
   struct kevent event;
-  EV_SET(&event, fd, 0, EV_DELETE, 0, 0, nullptr);
+  EV_SET(&event, fd, EVFILT_READ, EV_DELETE, 0, 0, nullptr);
   int result = kevent(kqFd, &event, 1, nullptr, 0, nullptr);
   if(result == -1) return false;
   return true;
