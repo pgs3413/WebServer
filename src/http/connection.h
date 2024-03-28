@@ -47,6 +47,8 @@ public:
     std::string getAddress();
     unsigned short getPort();
 
+    std::string getUrl();
+
 };
 
 

@@ -7,6 +7,7 @@
 #include<iostream>
 #include<assert.h>
 #include<errno.h>
+#include<unistd.h>
 
 using namespace std;
 
@@ -50,14 +51,15 @@ int main(){
       << "close: " << event.isClose() << " "
       << "err: " << event.isErr()
       << endl;
-      result = epoller.modFd(event.getFd(), false, true, true, false, true);
+      if(event.isClose()) goto out;
+      result = epoller.modFd(event.getFd(), true, false, true, false, true);
       // result = epoller.delFd(event.getFd());
       if(!result){
         cout << "wrong" << endl;
         perror(nullptr);
         return 1;
       }
-      if(event.isClose()) goto out;
+      close(socket);
     }
 
   }

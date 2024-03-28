@@ -120,4 +120,8 @@ unsigned short Connction::getPort(){
     return socket.getPort();
 }
 
+std::string Connction::getUrl(){
+    return request -> getUrl();
+}
+
 };

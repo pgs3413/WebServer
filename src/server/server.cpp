@@ -65,10 +65,6 @@ void Server::start(){
                 assert(connMap.count(event.getFd()) == 1);
                 timer.adjust(event.getFd(), timeoutMs);
                 threadPool.submit(std::bind(&Server::read, this, connMap[event.getFd()].get()));
-            }else if(event.isOut()){
-                assert(connMap.count(event.getFd()) == 1);
-                timer.adjust(event.getFd(), timeoutMs);
-                threadPool.submit(std::bind(&Server::write, this, connMap[event.getFd()].get()));
             }else {
                 debug("what?");
             }
@@ -94,7 +90,7 @@ void Server::accept(){
 void Server::close(std::string reason, int fd){
     assert(connMap.count(fd) == 1);
     debug("因{}，连接断开，对方地址:{}，对方端口:{}", reason, connMap[fd]->getAddress(), connMap[fd]->getPort());
-    assert(epoller.delFd(fd));
+    // assert(epoller.delFd(fd));
     connMap.erase(fd);
 }
 
@@ -102,8 +98,8 @@ void Server::read(http::Connction *conn){
     debug("接受到一次请求... 对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
     bool result = conn->processRequest();
     if(result){
-        debug("处理请求完成，准备响应，对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
-        assert(epoller.modFd(*conn, false, true, true, false, true));
+        debug("处理请求 {} 完成，准备响应，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
+        this -> write(conn);
     }else{
         debug("处理请求未完成，等待下次读取，对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
         assert(epoller.modFd(*conn, true, false, true, false, true));
@@ -111,13 +107,9 @@ void Server::read(http::Connction *conn){
 }
 
  void Server::write(http::Connction *conn){
-     debug("响应... 对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
-     conn->processResponse();
-     if(conn->isKeepAlive()){
-        debug("响应完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
-        assert(epoller.modFd(*conn, true, false, true, false, true));
-     }else{
-        debug("响应完成，准备断开连接，对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
-        assert(epoller.modFd(*conn, false, false, true, false, true));
-     }
+    debug("响应... 对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
+    conn->processResponse();
+    debug("响应 {} 完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
+    conn -> init();
+    assert(epoller.modFd(*conn, true, false, true, false, true));
  }
