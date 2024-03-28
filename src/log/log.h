@@ -10,7 +10,7 @@
 #include<sstream>
 #include<stdexcept>
 
-namespace log {
+namespace logger {
 
 using std::string;
 using std::ostringstream;

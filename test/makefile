@@ -5,12 +5,13 @@ include ../globalfile
 target = $(des)
 bin = ./bin
 args = --help
+platform = $(os)
 
 all:
 	@echo "test nothing to do"
 
 $(target): cmd
-	$(cc) $(obj) test_$@.cpp -o $(bin)/$@ ${option}
+	$(cc) -D$(platform) $(obj) test_$@.cpp -std=c++11 -o $(bin)/$@ ${option} 
 	cd $(bin) && ./$@ $(args)
 
 cmd:

@@ -2,7 +2,7 @@
 
 int main(){
 
-    log::init(log::DEBUG, "", "", 1000, true, false);
+    logger::init(logger::DEBUG, "", "", 1000, true, false);
 
     Server server(8070);
 

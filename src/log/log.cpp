@@ -5,7 +5,7 @@
 #include<iomanip>
 #include<sys/stat.h>
 
-namespace log {
+namespace logger {
 
 Log::Log(){}
 

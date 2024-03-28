@@ -5,12 +5,12 @@
 
 int main(){
 
-    log::init(log::INFO, "", "", 1000, true, false);
+    logger::init(logger::INFO, "", "", 1000, true, false);
 
     auto func = [](int second, const std::string &s){
-        log::info("{} start to work, need {} seconds...", s, second);
+        logger::info("{} start to work, need {} seconds...", s, second);
         std::this_thread::sleep_for(std::chrono::seconds(second));
-        log::info("{} finished work!", s);
+        logger::info("{} finished work!", s);
     };
 
     ThreadPool threadPool(100, 3);
@@ -22,7 +22,7 @@ int main(){
 
     threadPool.join();
 
-    log::info("all task finish!");
+    logger::info("all task finish!");
     
     return 0;
 

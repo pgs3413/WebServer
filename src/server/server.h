@@ -18,8 +18,8 @@
 #include<assert.h>
 
 
-using log::debug;
-using log::info;
+using logger::debug;
+using logger::info;
 
 class Server {
 

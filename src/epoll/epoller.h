@@ -1,10 +1,10 @@
 #ifndef EPOLLER_H_
 #define EPOLLER_H_
 
+#ifndef MAC
+
 #include<sys/epoll.h>
-
-
-class Epoller{
+class Epoller {
 
 private:
 
@@ -72,5 +72,82 @@ public:
     Iterator end();
 
 };
+
+#else
+
+#include<sys/event.h>
+#include<sys/types.h>
+
+class Epoller {
+
+private:
+
+  int kqFd;
+  int evListNum;
+  int eventNum;
+  struct kevent * evlist;
+
+  void makeEvent(struct kevent * ev, int fd, bool in, bool out, bool close, bool et, bool oneshot);
+
+public:
+
+  explicit Epoller(int evListNum_ = 1024);
+  ~Epoller();
+  Epoller(const Epoller &) = delete;
+  Epoller & operator=(const Epoller &) = delete;
+
+  bool addFd(int fd, bool in, bool out, bool close, bool et, bool oneshot);
+  bool modFd(int fd, bool in, bool out, bool close, bool et, bool oneshot);
+  bool delFd(int fd);
+  bool wait(int timeoutMs = -1);
+
+      class Item;
+
+    class Iterator{
+
+        Epoller * epoller;
+        int index;
+
+        public:
+
+            friend class Epoller;
+
+            Iterator(Epoller * epoller = nullptr, int index = 0) : epoller(epoller) , index(index){}
+            ~Iterator() = default;
+            bool operator==(const Iterator &i);
+            bool operator!=(const Iterator &i);
+            Item operator*();
+            Iterator & operator++();
+            Iterator operator++(int);
+
+    };
+
+    class Item{
+
+        long fd;
+        short filter;
+        unsigned short flags;
+
+        public:
+
+            friend class Iterator;
+
+            Item(long fd = -1, short filter = 0, unsigned short flags = 0) : fd(fd) , filter(filter), flags(flags){}
+            ~Item() = default;
+
+            int getFd(){return fd;}
+            bool isIn();
+            bool isOut();
+            bool isClose();
+            bool isErr();
+
+    };
+
+    Iterator begin();
+    Iterator end();
+
+};
+
+#endif
 
 #endif

@@ -3,6 +3,7 @@ dir = .
 include globalfile
 
 des = all
+os = LINUX
 
 all:
 	@echo "nothing to do"
