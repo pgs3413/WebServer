@@ -32,6 +32,7 @@ port(port), timeoutMs(timeoutMs),
     debug("set router handlers.");
     http::Router::setDefaultHandler(_404Handler);
     http::Router::setErrHandler(_400Handler);
+    http::Router::addHandler("/cgi/*", CGIHandler);
     http::Router::addHandler("/*", ResourceHandler);
     debug("set SIGINT handler for exit.");
     signal(SIGINT, exitHander);

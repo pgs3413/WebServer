@@ -8,6 +8,7 @@
 #include "../http/connection.h"
 #include "../handler/resourcehandler.h"
 #include "../handler/syshandler.h"
+#include"../handler/cgihandler.h"
 #include "../timer/timer.h"
 #include "../pool/threadpool.h"
 #include<memory>

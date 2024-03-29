@@ -3,6 +3,7 @@
 #include "../src/http/router.h"
 #include "../src/handler/syshandler.h"
 #include "../src/handler/resourcehandler.h"
+#include "../src/handler/cgihandler.h"
 #include<iostream>
 #include<stdlib.h>
 
@@ -12,6 +13,7 @@ using std::endl;
 int main(){
 
     setenv("resources_path", "../resources/", 1);
+    setenv("cgi_path", "./", 1);
 
     auto helloHandler = [](http::Request &req, http::Response &resp){
         // resp.setHeader("Content-Type", "text/plain");
@@ -21,9 +23,10 @@ int main(){
     http::Router::setErrHandler(_400Handler);
     http::Router::setDefaultHandler(_404Handler);
     http::Router::addHandler("/hello", helloHandler);
+    http::Router::addHandler("/cgi/*", CGIHandler);
     http::Router::addHandler("/*", ResourceHandler);
 
-    ServerSocket server(8080);
+    ServerSocket server(8081);
     cout << "start to listen..." << endl;
     Socket socket = server.acceptSocket();
     cout << "listened." << endl;
