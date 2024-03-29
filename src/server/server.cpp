@@ -1,5 +1,4 @@
 #include "server.h"
-#include <iostream>
 
 void exitHander(int sig){
     info("------ server exited! ------");

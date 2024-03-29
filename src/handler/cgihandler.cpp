@@ -7,6 +7,7 @@
 #include<sys/resource.h>
 #include<sys/wait.h>
 #include<cstring>
+#include<errno.h>
 
 void CGIHandler(http::Request &request, http::Response &response){
 
@@ -75,6 +76,11 @@ void CGIHandler(http::Request &request, http::Response &response){
     char * argv[] = {buf, nullptr};
 
     execvp(fileName.c_str(), argv);
+
+    write(2, "something wrong: ", 17);
+    perror(nullptr);
+
+    exit(1);
 
   }else {
 
