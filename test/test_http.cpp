@@ -68,6 +68,7 @@ int main(){
 
         cout << "start to write..." << " (" << count << ")" << endl;
         conn.processResponse();
+        cout << "writed!" << " (" << count << ")" << endl;
 
         if(!conn.isKeepAlive()) break;     
     }

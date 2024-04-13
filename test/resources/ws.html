@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebSocket Example</title>
+<script>
+    var socket;
+
+    // 打开WebSocket连接
+    function openWebSocket() {
+        socket = new WebSocket("ws://localhost:8081/ws"); // 请替换成你的WebSocket服务器地址
+
+        // 当连接打开时的回调函数
+        socket.onopen = function(event) {
+            console.log("WebSocket连接已打开");
+        };
+
+        // 当接收到消息时的回调函数
+        socket.onmessage = function(event) {
+            console.log("接收到消息: " + event.data);
+        };
+
+        // 当连接关闭时的回调函数
+        socket.onclose = function(event) {
+            console.log("WebSocket连接已关闭");
+        };
+
+        // 当发生错误时的回调函数
+        socket.onerror = function(error) {
+            console.log("WebSocket发生错误: " + error);
+        };
+    }
+
+    // 发送消息
+    function sendMessage() {
+        var messageInput = document.getElementById("messageInput");
+        var message = messageInput.value;
+        socket.send(message);
+        messageInput.value = "";
+    }
+
+    // 关闭WebSocket连接
+    function closeWebSocket() {
+        socket.close();
+    }
+</script>
+</head>
+<body>
+    <h1>WebSocket Example</h1>
+    <button onclick="openWebSocket()">Open WebSocket</button>
+    <button onclick="closeWebSocket()">Close WebSocket</button>
+    <br><br>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>

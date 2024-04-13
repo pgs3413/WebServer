@@ -7,7 +7,7 @@ int main(){
 
     try{
 
-        ServerSocket server(8080, true, 1024);
+        ServerSocket server(8081, true, 1024);
         std::cout << "server wait to connet..." << std::endl;
         // server.setNonBlock();
         Socket socket = server.acceptSocket();
