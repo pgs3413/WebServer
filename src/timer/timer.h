@@ -1,9 +1,11 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+#include<mutex>
+#include<functional>
 #include<chrono>
 #include "../queue/smallheap.h"
-#include<functional>
+
 
 class Timer {
 
@@ -31,7 +33,8 @@ private:
     };
 
     SmallHeap<Item> heap;
-    
+    std::mutex mtx;
+
 public:
 
     Timer();

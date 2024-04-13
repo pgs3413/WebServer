@@ -59,11 +59,11 @@ void Server::start(){
             if(event.getFd() == int(*serverSocket)){
                 this -> accept();
             }else if(event.isClose() || event.isErr()){
-                close("对方关闭或错误发生", event.getFd());
                 timer.del(event.getFd());
+                close("对方关闭或错误发生", event.getFd());
             }else if(event.isIn()){
                 assert(connMap.count(event.getFd()) == 1);
-                timer.adjust(event.getFd(), timeoutMs);
+                timer.del(event.getFd());
                 threadPool.submit(std::bind(&Server::read, this, connMap[event.getFd()].get()));
             }else {
                 debug("what?");
@@ -103,6 +103,7 @@ void Server::read(http::Connction *conn){
     }else{
         debug("处理请求未完成，等待下次读取，对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
         assert(epoller.modFd(*conn, true, false, true, false, true));
+        timer.add(*conn, timeoutMs, std::bind(&Server::close, this, "连接超时", int(*conn))); 
     }
 }
 
@@ -112,4 +113,5 @@ void Server::read(http::Connction *conn){
     debug("响应 {} 完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
     conn -> init();
     assert(epoller.modFd(*conn, true, false, true, false, true));
+    timer.add(*conn, timeoutMs, std::bind(&Server::close, this, "连接超时", int(*conn))); 
  }
