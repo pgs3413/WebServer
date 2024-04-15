@@ -47,6 +47,7 @@ void Request::setVersion(const std::string &version){
 }
 
 std::string Request::getParameter(const std::string &key){
+    if(parametersMap.count(key) == 0) return "";
     return parametersMap[key];
 }
 
@@ -63,6 +64,7 @@ void Request::setParameter(const std::string &key, const std::string &value){
 }
 
 std::string Request::getHeader(const std::string &key){
+    if(headersMap.count(key) == 0) return "";
     return headersMap[key];
 }
 

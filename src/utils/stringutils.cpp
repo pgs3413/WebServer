@@ -35,3 +35,7 @@ long toNumber(const std::string &s, long defaultValue){
     }
     return result;
 }
+
+std::string sha1AndBase64(const std::string &s){
+    
+}

@@ -12,5 +12,7 @@ bool isNumber(const std::string &s);
 
 long toNumber(const std::string &s, long defaultValue);
 
+std::string sha1AndBase64(const std::string &s);
+
 
 #endif

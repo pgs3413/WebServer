@@ -5,6 +5,7 @@ namespace http {
 std::unordered_map<int, std::string> Response::statusMap = {
     {OK, "OK"},
     {BAD_REQUEST, "Bad Request"}, {NOT_FOUND, "Not Found"},
+    {SWITCHING_PROTOCOLS, "Switching Protocols"},
 };
 
 std::string Response::getStatusStr(int status){

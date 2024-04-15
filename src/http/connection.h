@@ -29,7 +29,10 @@ private:
 
     static std::string CRLF;
 
+    bool _isWebSocket;
+
     std::string getResponseHeader();
+    void handleWebSocket();
 
 public:
 
@@ -43,6 +46,7 @@ public:
     void processResponse();
 
     bool isKeepAlive();
+    bool isWebSocket();
     
     std::string getAddress();
     unsigned short getPort();

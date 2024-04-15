@@ -9,6 +9,7 @@ request(nullptr),
 parser(nullptr),
 response(nullptr),
 state(NOT_INITIAL),
+_isWebSocket(false),
 socket(std::move(socket_))
 {
     socket.setNonBlock();
@@ -61,7 +62,14 @@ bool Connction::processRequest(){
     parser -> parse();
     if(parser -> isFinish()){
         if(parser -> isSuccess()){
-            Router::route(*request, *response);
+            if(request->getHeader("Connection") == "Upgrade" 
+                && request->getHeader("Upgrade") == "websocket"){
+                    _isWebSocket = true;
+                    handleWebSocket();
+                }
+            else {
+                Router::route(*request, *response);
+            }
         }else {
             Router::getErrHandler()(*request, *response);
         }
@@ -69,6 +77,13 @@ bool Connction::processRequest(){
         return true;
     }
     return false;
+}
+
+void Connction::handleWebSocket(){
+    response->setStatus(Response::SWITCHING_PROTOCOLS);
+    response->setHeader("Connection","Upgrade");
+    response->setHeader("Upgrade","websocket");
+    response->setHeader("Sec-WebSocket-Accept","xxx");
 }
 
 std::string Connction::getResponseHeader(){
@@ -110,6 +125,10 @@ void Connction::processResponse(){
 bool Connction::isKeepAlive(){
     assert(request != nullptr);
     return request -> getHeader(Request::CONNECTION_KEY) == "keep-alive";
+}
+
+bool Connction::isWebSocket(){
+    return _isWebSocket;
 }
 
 std::string Connction::getAddress(){
