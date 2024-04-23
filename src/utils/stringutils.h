@@ -4,6 +4,8 @@
 #include<string>
 #include<vector>
 #include<cstdlib>
+#include"sha1.hpp"
+#include"base64.h"
 
 std::vector<std::string> 
 split(const std::string &str, char delimiter);

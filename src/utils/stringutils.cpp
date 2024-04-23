@@ -38,4 +38,10 @@ long toNumber(const std::string &s, long defaultValue){
 
 std::string sha1AndBase64(const std::string &s){
     
+    SHA1 checksum;
+    checksum.update(s.c_str());
+    std::string s_sha1 = checksum.final();
+    std::string s_sha1_base64 = CBASE64::encode(s_sha1);
+    return s_sha1_base64;
+
 }

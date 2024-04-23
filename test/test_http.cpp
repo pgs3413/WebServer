@@ -66,6 +66,8 @@ int main(){
         }
         cout << s << endl;
 
+        cout << "是否websocket连接：" << (conn.isWebSocket() ? "是" : "否") << endl;
+
         cout << "start to write..." << " (" << count << ")" << endl;
         conn.processResponse();
         cout << "writed!" << " (" << count << ")" << endl;
