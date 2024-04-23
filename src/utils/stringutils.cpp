@@ -1,4 +1,6 @@
 #include "stringutils.h"
+#include <sstream>
+#include <vector>
 
 std::vector<std::string> 
 split(const std::string &str, char delimiter){
@@ -36,12 +38,25 @@ long toNumber(const std::string &s, long defaultValue){
     return result;
 }
 
+std::string convertHex(const std::string &s){
+    std::string result;
+    for (size_t i = 0; i < s.length(); i += 2) {
+        std::string byteString = s.substr(i, 2);
+        unsigned int byte = 0;
+        std::stringstream ss;
+        ss << std::hex << byteString;
+        ss >> byte;
+        result += static_cast<unsigned char>(byte);
+    }
+    return result;
+}
+
 std::string sha1AndBase64(const std::string &s){
     
     SHA1 checksum;
     checksum.update(s.c_str());
     std::string s_sha1 = checksum.final();
-    std::string s_sha1_base64 = CBASE64::encode(s_sha1);
+    std::string s_sha1_base64 = CBASE64::encode(convertHex(s_sha1));
     return s_sha1_base64;
 
 }

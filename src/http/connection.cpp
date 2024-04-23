@@ -1,6 +1,5 @@
 #include"connection.h"
 #include"../utils/stringutils.h"
-#include<iostream>
 
 namespace http {
 
@@ -85,6 +84,7 @@ void Connction::handleWebSocket(){
     response->setStatus(Response::SWITCHING_PROTOCOLS);
     response->setHeader("Connection","Upgrade");
     response->setHeader("Upgrade","websocket");
+    response->setHeader("Sec-WebSocket-Version",request->getHeader("Sec-WebSocket-Version"));
     std::string s = request->getHeader("Sec-WebSocket-Key");
     s += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     response->setHeader("Sec-WebSocket-Accept",sha1AndBase64(s));
@@ -116,8 +116,6 @@ void Connction::processResponse(){
     response -> setHeader("Content-Length", std::to_string(response -> getBufSize()));
     
     std::string header = getResponseHeader();
-
-    std::cout << "resp headers: " << header << std::endl;
 
     struct iovec vecs[2] = {
         {.iov_base = (void *)header.c_str(), .iov_len = header.size()},

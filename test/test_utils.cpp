@@ -21,13 +21,11 @@ int main(){
     // cout << toNumber(s1, 0) << endl;
     // cout << toNumber(s2, 123) << endl;
 
-    // std::string s = sha1AndBase64("abc"); //a9993e364706816aba3e25717850c26c9cd0d89d
-    // cout << s << endl;
 
-    std::string key("ERYsOLGW0FbU5wt+8kn4NA==");
+    std::string key("dGhlIHNhbXBsZSBub25jZQ==");
     key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     std::string s = sha1AndBase64(key);
-    cout << s << endl;
+    cout << s << endl; //s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
 
     return 0;
 
