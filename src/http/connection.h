@@ -2,6 +2,7 @@
 #define HTTP_CONNECTION_H_
 
 #include "../socket/socket.h"
+#include "../websocket/websocket.h"
 #include "request.h"
 #include "parser.h"
 #include "response.h"
@@ -26,13 +27,13 @@ private:
     std::unique_ptr<Request> request;
     std::unique_ptr<Parser> parser;
     std::unique_ptr<Response> response;
+    std::unique_ptr<WebSocket> webSocket;
 
     static std::string CRLF;
 
     bool _isWebSocket;
 
     std::string getResponseHeader();
-    void handleWebSocket();
 
 public:
 

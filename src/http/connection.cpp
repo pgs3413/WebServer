@@ -1,5 +1,4 @@
 #include"connection.h"
-#include"../utils/stringutils.h"
 
 namespace http {
 
@@ -9,6 +8,7 @@ Connection::Connection(Socket &&socket_) :
 request(nullptr),
 parser(nullptr),
 response(nullptr),
+webSocket(nullptr),
 state(NOT_INITIAL),
 _isWebSocket(false),
 socket(std::move(socket_))
@@ -72,7 +72,9 @@ bool Connection::processRequest(){
             if(request->getHeader("Connection") == "Upgrade" 
                 && request->getHeader("Upgrade") == "websocket"){
                     _isWebSocket = true;
-                    handleWebSocket();
+                    std::unique_ptr<WebSocket> webSocket_temp(new WebSocket(&socket));
+                    webSocket = std::move(webSocket_temp);
+                    webSocket->handShake(*request,*response);
                 }
             else {
                 Router::route(*request, *response);
@@ -84,16 +86,6 @@ bool Connection::processRequest(){
         return true;
     }
     return false;
-}
-
-void Connection::handleWebSocket(){
-    response->setStatus(Response::SWITCHING_PROTOCOLS);
-    response->setHeader("Connection","Upgrade");
-    response->setHeader("Upgrade","websocket");
-    response->setHeader("Sec-WebSocket-Version",request->getHeader("Sec-WebSocket-Version"));
-    std::string s = request->getHeader("Sec-WebSocket-Key");
-    s += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-    response->setHeader("Sec-WebSocket-Accept",sha1AndBase64(s));
 }
 
 std::string Connection::getResponseHeader(){
@@ -131,6 +123,8 @@ void Connection::processResponse(){
     socket.writevSocket(vecs, 2);
     response -> postResponse();
     state = DONE;
+
+    if(isWebSocket()) webSocket->process(request->getUrl());
 }
 
 bool Connection::isKeepAlive(){
