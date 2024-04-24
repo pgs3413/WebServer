@@ -78,12 +78,12 @@ void Server::accept(){
         Socket socket = serverSocket -> acceptSocket();
         if(socket < 0) break;
         assert(connMap.count(socket) == 0);
-        http::Connction *conn = new http::Connction(std::move(socket));
+        http::Connection *conn = new http::Connection(std::move(socket));
         debug("接受到连接，对方地址:{}，对方端口:{}",conn->getAddress(), conn->getPort());
         conn -> init();
         assert(epoller.addFd(*conn, true, false, true, false, true));
         timer.add(*conn, timeoutMs, std::bind(&Server::close, this, "连接超时", int(*conn)));
-        connMap[*conn] = std::move(std::unique_ptr<http::Connction>(conn)); 
+        connMap[*conn] = std::move(std::unique_ptr<http::Connection>(conn)); 
     }
 }
 
@@ -94,7 +94,7 @@ void Server::close(std::string reason, int fd){
     connMap.erase(fd);
 }
 
-void Server::read(http::Connction *conn){
+void Server::read(http::Connection *conn){
     debug("接受到一次请求... 对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
     bool result = conn->processRequest();
     if(result){
@@ -107,11 +107,17 @@ void Server::read(http::Connction *conn){
     }
 }
 
- void Server::write(http::Connction *conn){
+ void Server::write(http::Connection *conn){
     debug("响应... 对方地址:{}，对方端口:{}", conn->getAddress(), conn->getPort());
     conn->processResponse();
-    debug("响应 {} 完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
-    conn -> init();
-    assert(epoller.modFd(*conn, true, false, true, false, true));
-    timer.add(*conn, timeoutMs, std::bind(&Server::close, this, "连接超时", int(*conn))); 
+    if(conn->isWebSocket()){
+        debug("响应 {} websocket完成，关闭连接，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
+        //利用定时器回收Connection
+        timer.add(*conn, 0, std::bind(&Server::close, this, "回收 websocket connection", int(*conn)));
+    }else{
+        debug("响应 {} 完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
+        conn -> init();
+        assert(epoller.modFd(*conn, true, false, true, false, true));
+        timer.add(*conn, timeoutMs, std::bind(&Server::close, this, "连接超时", int(*conn))); 
+    }
  }

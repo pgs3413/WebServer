@@ -33,13 +33,13 @@ private:
     Timer timer;
     ThreadPool threadPool;
 
-    std::unordered_map<int, std::unique_ptr<http::Connction>> connMap;
+    std::unordered_map<int, std::unique_ptr<http::Connection>> connMap;
 
 
     void accept();
     void close(std::string reason, int fd);
-    void read(http::Connction *conn);
-    void write(http::Connction *conn);
+    void read(http::Connection *conn);
+    void write(http::Connection *conn);
 
 public:
     Server(unsigned short port, int threadNum = 20, int timeoutMs = 300000, int queueCapacity = 1000);

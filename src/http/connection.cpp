@@ -3,9 +3,9 @@
 
 namespace http {
 
-std::string Connction::CRLF = "\r\n";
+std::string Connection::CRLF = "\r\n";
 
-Connction::Connction(Socket &&socket_) : 
+Connection::Connection(Socket &&socket_) : 
 request(nullptr),
 parser(nullptr),
 response(nullptr),
@@ -16,19 +16,20 @@ socket(std::move(socket_))
     socket.setNonBlock();
 }
 
-Connction::~Connction(){
+Connection::~Connection(){
     socket.closeSocket();
 }
 
-Connction::operator int(){
+Connection::operator int(){
     return socket;
 }
 
-Request & Connction::getRequest(){
+Request & Connection::getRequest(){
     return *request;
 }
 
-void Connction::init(){
+void Connection::init(){
+    assert(state != CLOSED);
     state = REQUEST;
     std::unique_ptr<Request> request_temp(new Request());
     request = std::move(request_temp);
@@ -38,12 +39,17 @@ void Connction::init(){
     response = std::move(response_temp);
 }
 
+void Connection::close(){
+    socket.closeSocket();
+    state = CLOSED;
+}
+
 /*
 是否处理完了请求
 TRUE包括请求成功、请求失败（解析失败、内部失败等），此时已正常生成响应
 FALSE指的是请求体还未读完，需要继续等待后续读取
 */
-bool Connction::processRequest(){
+bool Connection::processRequest(){
     assert(state == REQUEST);
     assert(request != nullptr && parser != nullptr && response != nullptr);
     char buf[1024];
@@ -80,7 +86,7 @@ bool Connction::processRequest(){
     return false;
 }
 
-void Connction::handleWebSocket(){
+void Connection::handleWebSocket(){
     response->setStatus(Response::SWITCHING_PROTOCOLS);
     response->setHeader("Connection","Upgrade");
     response->setHeader("Upgrade","websocket");
@@ -90,7 +96,7 @@ void Connction::handleWebSocket(){
     response->setHeader("Sec-WebSocket-Accept",sha1AndBase64(s));
 }
 
-std::string Connction::getResponseHeader(){
+std::string Connection::getResponseHeader(){
     std::string header;
     header += "HTTP/";
     header += response->getVersion();
@@ -109,7 +115,7 @@ std::string Connction::getResponseHeader(){
     return header;
 }
 
-void Connction::processResponse(){
+void Connection::processResponse(){
     assert(state == RESPONSE);
     assert(response != nullptr);
 
@@ -127,24 +133,24 @@ void Connction::processResponse(){
     state = DONE;
 }
 
-bool Connction::isKeepAlive(){
+bool Connection::isKeepAlive(){
     assert(request != nullptr);
     return request -> getHeader(Request::CONNECTION_KEY) == "keep-alive";
 }
 
-bool Connction::isWebSocket(){
+bool Connection::isWebSocket(){
     return _isWebSocket;
 }
 
-std::string Connction::getAddress(){
+std::string Connection::getAddress(){
     return socket.getAddress();
 }
 
-unsigned short Connction::getPort(){
+unsigned short Connection::getPort(){
     return socket.getPort();
 }
 
-std::string Connction::getUrl(){
+std::string Connection::getUrl(){
     return request -> getUrl();
 }
 

@@ -31,7 +31,7 @@ int main(){
     Socket socket = server.acceptSocket();
     cout << "listened." << endl;
 
-    http::Connction conn(std::move(socket));
+    http::Connection conn(std::move(socket));
 
     int count = 0;
 

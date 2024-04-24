@@ -13,12 +13,12 @@
 
 namespace http {
 
-class Connction {
+class Connection {
 
 private:
 
     enum STATE {
-        NOT_INITIAL, REQUEST, RESPONSE, DONE 
+        NOT_INITIAL, REQUEST, RESPONSE, DONE, CLOSED 
     };
 
     STATE state;
@@ -36,11 +36,12 @@ private:
 
 public:
 
-    Connction(Socket &&socket);
-    ~Connction();
+    Connection(Socket &&socket);
+    ~Connection();
     operator int();
 
     void init();
+    void close();
     Request & getRequest();
     bool processRequest();
     void processResponse();
