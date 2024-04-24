@@ -60,3 +60,4 @@ std::string sha1AndBase64(const std::string &s){
     return s_sha1_base64;
 
 }
+
