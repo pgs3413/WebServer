@@ -40,7 +40,7 @@ private:
 
 public:
 
-    friend class Connction;
+    friend class Connection;
 
     Response();
     ~Response();

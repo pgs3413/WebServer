@@ -12,23 +12,35 @@
 void CGIHandler(http::Request &request, http::Response &response){
 
   char *cgi_path = std::getenv("cgi_path");
-    std::string cgiPath = cgi_path == nullptr ? "./cgi_bin" : cgi_path;
-    if(cgiPath[cgiPath.size() - 1] == '/'){
-        cgiPath.pop_back();
-    }
+    std::string cgiPath = cgi_path == nullptr ? "./cgi_bin/" : cgi_path;
 
   char *cgi_prefix = std::getenv("cgi_prefix");
-  std::string cgiPrefix = cgi_prefix == nullptr ? "/cgi" : cgi_prefix;
+  std::string cgiPrefix = cgi_prefix == nullptr ? "/cgi/" : cgi_prefix;
+
+  char *shell_prefix = std::getenv("shell_prefix");
+  std::string shellPrefix = shell_prefix == nullptr ? "/sh/" : shell_prefix;
 
   std::string url = request.getUrl();
-  if(url.compare(0, cgiPrefix.size(), cgiPrefix) != 0){
+
+  bool isCgi = false;
+  bool isShell = false;
+
+  if(url.compare(0, cgiPrefix.size(), cgiPrefix) == 0){
+    isCgi = true;
+  }
+
+  if(url.compare(0, shellPrefix.size(), shellPrefix) == 0){
+    isShell = true;
+  }
+
+  if(!(isCgi || isShell)){
     http::Router::getDefaultHandler()(request, response);
     return;
   }
 
-  url = url.substr(cgiPrefix.size());
+  url = isCgi ? url.substr(cgiPrefix.size()) : url.substr(shellPrefix.size());
 
-  std::string fileName = cgiPath + url;
+  std::string fileName = isCgi ? cgiPath + url : url;
 
   int reqFd[2] = {-1, -1};
   int respFd[2] = {-1, -1};

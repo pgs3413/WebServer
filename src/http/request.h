@@ -27,7 +27,7 @@ private:
 
 public:
 
-    friend class Connction;
+    friend class Connection;
     friend class Parser;
 
     static const std::unordered_set<std::string> METHOD_SET;
