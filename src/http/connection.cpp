@@ -72,7 +72,7 @@ bool Connection::processRequest(){
             if(request->getHeader("Connection") == "Upgrade" 
                 && request->getHeader("Upgrade") == "websocket"){
                     _isWebSocket = true;
-                    std::unique_ptr<WebSocket> webSocket_temp(new WebSocket(&socket));
+                    std::unique_ptr<WebSocket::WebSocket> webSocket_temp(new WebSocket::WebSocket(&socket));
                     webSocket = std::move(webSocket_temp);
                     webSocket->handShake(*request,*response);
                 }

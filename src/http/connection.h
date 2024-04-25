@@ -27,7 +27,7 @@ private:
     std::unique_ptr<Request> request;
     std::unique_ptr<Parser> parser;
     std::unique_ptr<Response> response;
-    std::unique_ptr<WebSocket> webSocket;
+    std::unique_ptr<WebSocket::WebSocket> webSocket;
 
     static std::string CRLF;
 

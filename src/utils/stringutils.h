@@ -16,7 +16,7 @@ long toNumber(const std::string &s, long defaultValue);
 
 std::string sha1AndBase64(const std::string &s);
 
-void mask(unsigned char *mask_key, int mask_key_len, unsigned char *payload, int payload_len, unsigned char *des);
+void mask(const unsigned char* const mask_key, int mask_key_len, const unsigned char* const payload, unsigned char* const des, int payload_len);
 
 
 #endif

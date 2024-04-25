@@ -115,6 +115,7 @@ void Server::read(http::Connection *conn){
         debug("响应 {} websocket完成，关闭连接，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
         //利用定时器回收Connection
         timer.add(*conn, 0, std::bind(&Server::close, this, "回收 websocket connection", int(*conn)));
+        assert(epoller.modFd(*conn, false, false, true, false, true));
     }else{
         debug("响应 {} 完成，准备下一次请求，对方地址:{}，对方端口:{}", conn->getUrl(), conn->getAddress(), conn->getPort());
         conn -> init();

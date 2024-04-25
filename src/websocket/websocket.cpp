@@ -1,5 +1,7 @@
 #include "websocket.h"
 
+namespace WebSocket{
+
 WebSocket::WebSocket(Socket * socket) : socket(socket) {}
 
 void WebSocket::handShake(http::Request & request, http::Response & response){
@@ -14,7 +16,9 @@ void WebSocket::handShake(http::Request & request, http::Response & response){
 
 void WebSocket::process(const std::string &url){
 
-    epoller.addFd(*socket, true, false, true, false, false);
+    epoller.addFd(*socket, true, false, true, true, false);
+
+    Frame *frame = new Frame;
 
     while (epoller.wait(-1))
     {
@@ -23,31 +27,51 @@ void WebSocket::process(const std::string &url){
         if(event.getFd() == *socket){
 
             if(event.isClose() || event.isErr()) {
+                delete frame;
                 return;
             }
 
             if(event.isIn()){
 
-                unsigned char buf[1024];
-                int len;
-                std::cout << "收到消息: ";
-
-                while ((len = socket->readSocket(buf, 1024)) > 0)
+                while (true)
                 {
-                    for(int i = 0; i < len; i++){
-                        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buf[i]);
-                    }
+
+                unsigned long needLen = frame->next();
+                if(needLen == 0){
+                    std::cout << "isFin: " << frame->isFin()
+                    << " isMask: " << frame->isMask()
+                    << " op: " << frame->getOp()
+                    << " mask key: " << frame->getMaskKey()
+                    << " payload size: " << frame->size()
+                    << " payload: " << frame->getpayLoadString()
+                    << std::endl;
+                    bool isClose = frame->isCloseFrame();
+                    delete frame;
+                    if(isClose) return;
+                    frame = new Frame;
+                    continue;
+                }
+
+                int availableLen = socket->readableBytes();
+                if(needLen > availableLen) break;
+                
+                unsigned char buf[needLen];
+                int len = socket->readSocket(buf,needLen);
+                assert(len == needLen);
+                frame->parse(buf, needLen);
+
                 }
                 
-                std::cout << std::endl;
 
             }
 
         }
 
-    }
+        }
     }
     
 
 }
+
+};
 

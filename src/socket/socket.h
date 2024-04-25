@@ -2,6 +2,7 @@
 #define SERVER_SOCKET_H
 
 #include<sys/socket.h>
+#include<sys/ioctl.h>
 #include<sys/uio.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
@@ -49,6 +50,8 @@ public:
     int readSocket(void *buf, size_t size);
     int writeSocket(const void *buf, size_t size);
     int writevSocket(const struct iovec *iov, int iovcnt);
+
+    int readableBytes();
 
 };
 

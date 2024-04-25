@@ -73,3 +73,14 @@ int Socket::writevSocket(const struct iovec *iov, int iovcnt){
     }
     return writev(fd, iov, iovcnt);
 }
+
+int Socket::readableBytes(){
+    if(fd < 0){
+        throw std::logic_error("socket not yet created");
+    }
+    int bytesAvailable = 0;
+    if(ioctl(fd, FIONREAD, &bytesAvailable) < 0) {
+       throw std::runtime_error("could not get readable bytes");
+    }
+    return bytesAvailable;
+}

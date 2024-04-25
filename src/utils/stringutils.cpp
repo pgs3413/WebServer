@@ -61,3 +61,11 @@ std::string sha1AndBase64(const std::string &s){
 
 }
 
+void mask(const unsigned char* const mask_key, int mask_key_len, const unsigned char* const payload, unsigned char* const des, int payload_len){
+
+    for(int i = 0; i < payload_len; i++){
+        des[i] = payload[i] ^ mask_key[i % mask_key_len];
+    }
+
+}
+
