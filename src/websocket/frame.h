@@ -43,6 +43,7 @@ public:
     bool isCloseFrame();
     unsigned long size();
     std::string getMaskKey();
+    const unsigned char * getPayLoad();
     std::string getpayLoadString();
 
 };

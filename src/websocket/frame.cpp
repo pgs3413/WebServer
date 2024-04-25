@@ -173,6 +173,10 @@ std::string Frame::getMaskKey(){
     return osstream.str();
 }
 
+const unsigned char * Frame::getPayLoad(){
+    return payload;
+}
+
 std::string Frame::getpayLoadString(){
     if(payloadLen == 0) return "";
     std::string s;

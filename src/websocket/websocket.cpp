@@ -45,6 +45,9 @@ void WebSocket::process(const std::string &url){
                     << " payload size: " << frame->size()
                     << " payload: " << frame->getpayLoadString()
                     << std::endl;
+                    ServerFrame serverFrame;
+                    serverFrame.setPayload(frame->getPayLoad(), frame->size());
+                    socket->writeSocket(serverFrame.data(), serverFrame.size());
                     bool isClose = frame->isCloseFrame();
                     delete frame;
                     if(isClose) return;

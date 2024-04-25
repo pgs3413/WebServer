@@ -7,6 +7,7 @@
 #include"../utils/stringutils.h"
 #include"../epoll/epoller.h"
 #include"frame.h"
+#include"serverframe.h"
 
 namespace WebSocket {
 
