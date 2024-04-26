@@ -16,6 +16,7 @@ public:
     ~ServerFrame();
 
     void setPayload(const unsigned char* const payload, unsigned long len);
+    void setClose();
     const unsigned char * data();
     unsigned long size();
 

@@ -13,6 +13,10 @@ ServerFrame::~ServerFrame(){
 
 void ServerFrame::setPayload(const unsigned char* const payload, unsigned long len){
 
+    if(buf != nullptr){
+        delete [] buf;
+    }
+
     frameLen = 2;
     if(len > 125 && len < 65536) frameLen += 2;
     if(len >= 65536) frameLen += 8;
@@ -38,6 +42,19 @@ void ServerFrame::setPayload(const unsigned char* const payload, unsigned long l
         memcpy(buf + 10, payload, len);
     }
 
+}
+
+void ServerFrame::setClose(){
+
+    if(buf != nullptr){
+        delete [] buf;
+    }
+
+    frameLen = 2;
+    buf = new unsigned char[frameLen];
+
+    buf[0] = 0x88;
+    buf[1] = 0;
 }
 
 const unsigned char * ServerFrame::data(){

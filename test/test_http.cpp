@@ -13,7 +13,8 @@ using std::endl;
 int main(){
 
     setenv("resources_path", "../resources/", 1);
-    setenv("cgi_path", "./", 1);
+    setenv("cgi_path", "../resources/", 1);
+    setenv("ws_path", "../resources/", 1);
 
     auto helloHandler = [](http::Request &req, http::Response &resp){
         // resp.setHeader("Content-Type", "text/plain");

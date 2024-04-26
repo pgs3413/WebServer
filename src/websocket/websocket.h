@@ -17,11 +17,20 @@ private:
 
     Socket * socket;
     Epoller epoller;
+    Frame * frame;
+
+    int reqFd[2];
+    int respFd[2];
+
+    std::string getFileName(const std::string &url);
+    void error(const std::string &err);
+    bool readClient();
+    bool readChild();
 
 public:
 
     WebSocket(Socket * socket);
-    ~WebSocket(){}
+    ~WebSocket();
 
     void handShake(http::Request & request, http::Response & response);
 
