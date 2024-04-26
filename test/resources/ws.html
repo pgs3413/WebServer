@@ -7,6 +7,10 @@
 <script>
     var socket;
 
+    function log(msg) {
+        document.getElementById('log').textContent = msg;
+    }
+
     // 打开WebSocket连接
     function openWebSocket() {
         socket = new WebSocket("ws://localhost:8081/ws.js"); // 请替换成你的WebSocket服务器地址
@@ -18,7 +22,7 @@
 
         // 当接收到消息时的回调函数
         socket.onmessage = function(event) {
-            console.log("接收到消息: " + event.data);
+            log('MESSAGE: ' + event.data);
         };
 
         // 当连接关闭时的回调函数
@@ -48,6 +52,7 @@
 </head>
 <body>
     <h1>WebSocket Example</h1>
+    <pre id="log"></pre>
     <button onclick="openWebSocket()">Open WebSocket</button>
     <button onclick="closeWebSocket()">Close WebSocket</button>
     <br><br>
