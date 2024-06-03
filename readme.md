@@ -10,3 +10,9 @@ WebServer是一个支持**http**、**websocket**的**可扩展**、**跨平台**
 * 支持websocket协议
 * 不依赖任何第三方库
 
+## 编译
+
+在linux下：`make os=LINUX`
+在MAC下：`make os=MAC`
+
+编译完之后，会在项目下创建一个**build**目录，目录下**server**文件为编译后的可执行文件。
