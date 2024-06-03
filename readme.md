@@ -12,10 +12,18 @@ WebServer是一个支持**http**、**websocket**的**可扩展**、**跨平台**
 
 ## 编译
 
-git clone之后，进入目录
+git clone之后，进入项目目录
 
 在linux下：`make os=LINUX`
 
 在MAC下：`make os=MAC`
 
 编译完之后，会在项目下创建一个**build**目录，目录下**server**文件为编译后的可执行文件。
+
+## 使用
+
+进入build目录，运行server `./server`，等待启动
+
+访问 <http://localhost:8070/> 即可看到一个404页面
+
+![404](./img/404.png)
